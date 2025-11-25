@@ -4,30 +4,24 @@ namespace KoiSmart.Database
 {
     public class DbContext
     {
-        private string _dbHost;
-        private string _dbPort;
-        private string _dbUser;
-        private string _dbPassword;
-        private string _dbName;
-        private string _sslMode;
-        private string _channelBinding;
-
         public string connStr;
 
         public DbContext()
         {
-            Env.Load();
+            // Load .env
+            Env.Load(".env");
 
-            _dbHost = Environment.GetEnvironmentVariable("DB_HOST");
-            _dbPort = Environment.GetEnvironmentVariable("DB_PORT");
-            _dbUser = Environment.GetEnvironmentVariable("DB_USER");
-            _dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD");
-            _dbName = Environment.GetEnvironmentVariable("DB_NAME");
-            _sslMode = Environment.GetEnvironmentVariable("SSL_Mode");
-            _channelBinding = Environment.GetEnvironmentVariable("Channel_Binding");
 
-            connStr = $"Host={_dbHost};Port={_dbPort};Username={_dbUser};Password={_dbPassword};Database={_dbName}; SSL Mode={_sslMode}; Channel Binding={_channelBinding}";
+            string host = Environment.GetEnvironmentVariable("DB_HOST");
+            string port = Environment.GetEnvironmentVariable("DB_PORT");
+            string user = Environment.GetEnvironmentVariable("DB_USER");
+            string password = Environment.GetEnvironmentVariable("DB_PASSWORD");
+            string name = Environment.GetEnvironmentVariable("DB_NAME");
+            string ssl = Environment.GetEnvironmentVariable("SSL_Mode") ?? "VerifyFull";
 
+            // Channel_Binding TIDAK BOLEH dimasukkan → hapus!
+            connStr =
+                $"Host={host};Port={port};Username={user};Password={password};Database={name};SSL Mode={ssl};Trust Server Certificate=true;";
         }
     }
 }

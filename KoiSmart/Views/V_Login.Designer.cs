@@ -90,6 +90,7 @@
             BttnVLoogin.TabIndex = 4;
             BttnVLoogin.Text = "Login";
             BttnVLoogin.UseVisualStyleBackColor = false;
+            BttnVLoogin.Click += BttnVLogin_Click;
             // 
             // label3
             // 

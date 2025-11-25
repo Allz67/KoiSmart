@@ -29,12 +29,12 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(V_Register));
-            textBox1 = new TextBox();
-            textBox2 = new TextBox();
-            textBox3 = new TextBox();
-            textBox4 = new TextBox();
-            textBox5 = new TextBox();
-            textBox6 = new TextBox();
+            TBNamaDepan = new TextBox();
+            TBNamaBelakang = new TextBox();
+            TBUsername = new TextBox();
+            TBEmailRegist = new TextBox();
+            TBPwRegist = new TextBox();
+            TBNoTelp = new TextBox();
             BttnVRegister = new Button();
             label1 = new Label();
             label2 = new Label();
@@ -46,53 +46,53 @@
             LbToLogin = new Label();
             SuspendLayout();
             // 
-            // textBox1
+            // TBNamaDepan
             // 
-            textBox1.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            textBox1.Location = new Point(784, 218);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(249, 43);
-            textBox1.TabIndex = 0;
+            TBNamaDepan.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            TBNamaDepan.Location = new Point(784, 218);
+            TBNamaDepan.Name = "TBNamaDepan";
+            TBNamaDepan.Size = new Size(249, 43);
+            TBNamaDepan.TabIndex = 0;
             // 
-            // textBox2
+            // TBNamaBelakang
             // 
-            textBox2.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            textBox2.Location = new Point(1066, 218);
-            textBox2.Name = "textBox2";
-            textBox2.Size = new Size(249, 43);
-            textBox2.TabIndex = 1;
+            TBNamaBelakang.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            TBNamaBelakang.Location = new Point(1066, 218);
+            TBNamaBelakang.Name = "TBNamaBelakang";
+            TBNamaBelakang.Size = new Size(249, 43);
+            TBNamaBelakang.TabIndex = 1;
             // 
-            // textBox3
+            // TBUsername
             // 
-            textBox3.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            textBox3.Location = new Point(784, 308);
-            textBox3.Name = "textBox3";
-            textBox3.Size = new Size(531, 43);
-            textBox3.TabIndex = 2;
+            TBUsername.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            TBUsername.Location = new Point(784, 308);
+            TBUsername.Name = "TBUsername";
+            TBUsername.Size = new Size(531, 43);
+            TBUsername.TabIndex = 2;
             // 
-            // textBox4
+            // TBEmailRegist
             // 
-            textBox4.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            textBox4.Location = new Point(784, 391);
-            textBox4.Name = "textBox4";
-            textBox4.Size = new Size(531, 43);
-            textBox4.TabIndex = 3;
+            TBEmailRegist.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            TBEmailRegist.Location = new Point(784, 391);
+            TBEmailRegist.Name = "TBEmailRegist";
+            TBEmailRegist.Size = new Size(531, 43);
+            TBEmailRegist.TabIndex = 3;
             // 
-            // textBox5
+            // TBPwRegist
             // 
-            textBox5.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            textBox5.Location = new Point(784, 475);
-            textBox5.Name = "textBox5";
-            textBox5.Size = new Size(531, 43);
-            textBox5.TabIndex = 4;
+            TBPwRegist.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            TBPwRegist.Location = new Point(784, 475);
+            TBPwRegist.Name = "TBPwRegist";
+            TBPwRegist.Size = new Size(531, 43);
+            TBPwRegist.TabIndex = 4;
             // 
-            // textBox6
+            // TBNoTelp
             // 
-            textBox6.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            textBox6.Location = new Point(784, 565);
-            textBox6.Name = "textBox6";
-            textBox6.Size = new Size(531, 43);
-            textBox6.TabIndex = 5;
+            TBNoTelp.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            TBNoTelp.Location = new Point(784, 565);
+            TBNoTelp.Name = "TBNoTelp";
+            TBNoTelp.Size = new Size(531, 43);
+            TBNoTelp.TabIndex = 5;
             // 
             // BttnVRegister
             // 
@@ -107,6 +107,7 @@
             BttnVRegister.TabIndex = 6;
             BttnVRegister.Text = "Register";
             BttnVRegister.UseVisualStyleBackColor = false;
+            BttnVRegister.Click += BttnVRegister_Click;
             // 
             // label1
             // 
@@ -220,12 +221,12 @@
             Controls.Add(label2);
             Controls.Add(label1);
             Controls.Add(BttnVRegister);
-            Controls.Add(textBox6);
-            Controls.Add(textBox5);
-            Controls.Add(textBox4);
-            Controls.Add(textBox3);
-            Controls.Add(textBox2);
-            Controls.Add(textBox1);
+            Controls.Add(TBNoTelp);
+            Controls.Add(TBPwRegist);
+            Controls.Add(TBEmailRegist);
+            Controls.Add(TBUsername);
+            Controls.Add(TBNamaBelakang);
+            Controls.Add(TBNamaDepan);
             Name = "V_Register";
             Text = "V_Registrasi";
             Load += V_Register_Load;
@@ -235,12 +236,12 @@
 
         #endregion
 
-        private TextBox textBox1;
-        private TextBox textBox2;
-        private TextBox textBox3;
-        private TextBox textBox4;
-        private TextBox textBox5;
-        private TextBox textBox6;
+        private TextBox TBNamaDepan;
+        private TextBox TBNamaBelakang;
+        private TextBox TBUsername;
+        private TextBox TBEmailRegist;
+        private TextBox TBPwRegist;
+        private TextBox TBNoTelp;
         private Button BttnVRegister;
         private Label label1;
         private Label label2;
