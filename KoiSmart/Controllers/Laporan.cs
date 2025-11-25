@@ -44,7 +44,7 @@ namespace KoiSmart.Controllers
 
             using (var conn = new NpgsqlConnection(_db.connStr))
             {
-                conn.Open();
+                conn.Open();    
 
                 string condition = last != null ? "WHERE t.tanggal_transaksi > @last" : "";
 

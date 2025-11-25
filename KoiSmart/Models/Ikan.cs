@@ -23,6 +23,6 @@ namespace KoiSmart.Models
     }
     public enum GradeIkan
     {
-        A, B, C
+        A, B
     }
 }

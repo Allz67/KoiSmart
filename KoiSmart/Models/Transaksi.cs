@@ -13,6 +13,7 @@ namespace KoiSmart.Models
         public int IdAkun { get; set; }
         public int IdReview { get; set; }
         public Status StatusTransaksi { get; set; }
+        public decimal TotalHarga { get; set; }
     }
     public enum Status
     {
