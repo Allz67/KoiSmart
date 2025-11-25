@@ -34,6 +34,8 @@
             label1 = new Label();
             label2 = new Label();
             BttnVLoogin = new Button();
+            label3 = new Label();
+            LbToRegister = new Label();
             SuspendLayout();
             // 
             // TBEmailLogin
@@ -89,12 +91,39 @@
             BttnVLoogin.Text = "Login";
             BttnVLoogin.UseVisualStyleBackColor = false;
             // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.BackColor = Color.Transparent;
+            label3.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label3.ForeColor = Color.White;
+            label3.Location = new Point(836, 650);
+            label3.Name = "label3";
+            label3.Size = new Size(146, 20);
+            label3.TabIndex = 5;
+            label3.Text = "Belum Punya Akun?";
+            // 
+            // LbToRegister
+            // 
+            LbToRegister.AutoSize = true;
+            LbToRegister.BackColor = Color.Transparent;
+            LbToRegister.Font = new Font("Segoe UI", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            LbToRegister.ForeColor = Color.Red;
+            LbToRegister.Location = new Point(998, 648);
+            LbToRegister.Name = "LbToRegister";
+            LbToRegister.Size = new Size(66, 25);
+            LbToRegister.TabIndex = 6;
+            LbToRegister.Text = "Daftar";
+            LbToRegister.Click += LbToRegister_Click;
+            // 
             // V_Login
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = (Image)resources.GetObject("$this.BackgroundImage");
             ClientSize = new Size(1403, 772);
+            Controls.Add(LbToRegister);
+            Controls.Add(label3);
             Controls.Add(BttnVLoogin);
             Controls.Add(label2);
             Controls.Add(label1);
@@ -102,6 +131,7 @@
             Controls.Add(TBEmailLogin);
             Name = "V_Login";
             Text = "V_Login";
+            Load += V_Login_Load;
             ResumeLayout(false);
             PerformLayout();
         }
@@ -113,5 +143,7 @@
         private Label label1;
         private Label label2;
         private Button BttnVLoogin;
+        private Label label3;
+        private Label LbToRegister;
     }
 }

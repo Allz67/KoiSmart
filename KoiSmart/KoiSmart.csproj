@@ -9,10 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="D:\Visual Studio\Codes\KoiSmartNew.cs" Link="KoiSmartNew.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="DotNetEnv" Version="3.1.1" />
     <PackageReference Include="Npgsql" Version="10.0.0" />
   </ItemGroup>

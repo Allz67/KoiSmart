@@ -42,6 +42,8 @@
             label4 = new Label();
             label5 = new Label();
             label6 = new Label();
+            label7 = new Label();
+            LbToLogin = new Label();
             SuspendLayout();
             // 
             // textBox1
@@ -178,12 +180,39 @@
             label6.TabIndex = 12;
             label6.Text = "No. Telpon";
             // 
-            // V_Registrasi
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.BackColor = Color.Transparent;
+            label7.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label7.ForeColor = Color.White;
+            label7.Location = new Point(784, 724);
+            label7.Name = "label7";
+            label7.Size = new Size(146, 20);
+            label7.TabIndex = 13;
+            label7.Text = "Sudah Punya Akun?";
+            // 
+            // LbToLogin
+            // 
+            LbToLogin.AutoSize = true;
+            LbToLogin.BackColor = Color.Transparent;
+            LbToLogin.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            LbToLogin.ForeColor = Color.Red;
+            LbToLogin.Location = new Point(945, 719);
+            LbToLogin.Name = "LbToLogin";
+            LbToLogin.Size = new Size(72, 28);
+            LbToLogin.TabIndex = 14;
+            LbToLogin.Text = "Masuk";
+            LbToLogin.Click += LbToLogin_Click;
+            // 
+            // V_Register
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = (Image)resources.GetObject("$this.BackgroundImage");
             ClientSize = new Size(1399, 774);
+            Controls.Add(LbToLogin);
+            Controls.Add(label7);
             Controls.Add(label6);
             Controls.Add(label5);
             Controls.Add(label4);
@@ -197,8 +226,9 @@
             Controls.Add(textBox3);
             Controls.Add(textBox2);
             Controls.Add(textBox1);
-            Name = "V_Registrasi";
+            Name = "V_Register";
             Text = "V_Registrasi";
+            Load += V_Register_Load;
             ResumeLayout(false);
             PerformLayout();
         }
@@ -218,5 +248,7 @@
         private Label label4;
         private Label label5;
         private Label label6;
+        private Label label7;
+        private Label LbToLogin;
     }
 }
