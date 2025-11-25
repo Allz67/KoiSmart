@@ -1,6 +1,6 @@
 ﻿namespace KoiSmart.Views
 {
-    partial class V_Registrasi
+    partial class V_Register
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(V_Registrasi));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(V_Register));
             textBox1 = new TextBox();
             textBox2 = new TextBox();
             textBox3 = new TextBox();

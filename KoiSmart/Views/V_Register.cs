@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace KoiSmart.Views
 {
-    public partial class V_Registrasi : Form
+    public partial class V_Register : Form
     {
-        public V_Registrasi()
+        public V_Register()
         {
             InitializeComponent();
         }

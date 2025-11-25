@@ -1,7 +1,8 @@
-﻿using Npgsql;
-using KoiSmart.Database;
-using KoiSmart.Models;
+﻿using KoiSmart.Database;
 using KoiSmart.Helpers;
+using KoiSmart.Models;
+using KoiSmart.Views;
+using Npgsql;
 
 namespace KoiSmart.Controllers
 {
@@ -12,6 +13,20 @@ namespace KoiSmart.Controllers
         public AuthController()
         {
             _dbContext = new DbContext();
+        }
+
+        public void ShowLoginForm(Form current)
+        {
+            current.Hide();
+            V_Login loginForm = new V_Login();
+            loginForm.Show();
+        }
+
+        public void ShowRegisterForm(Form current)
+        {
+            current.Hide();
+            V_Register registerForm = new V_Register();
+            registerForm.Show();
         }
 
         // LOGIN 

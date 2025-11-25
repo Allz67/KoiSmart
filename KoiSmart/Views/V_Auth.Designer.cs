@@ -65,6 +65,7 @@
             Controls.Add(BttnRegister);
             Name = "V_Auth";
             Text = "V_Auth";
+            Load += V_Auth_Load;
             ResumeLayout(false);
         }
 
