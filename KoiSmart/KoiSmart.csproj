@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="D:\Visual Studio\Codes\KoiSmartNew.cs" Link="KoiSmartNew.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Views\" />
     <Folder Include="Properties\" />
   </ItemGroup>
