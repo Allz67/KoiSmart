@@ -29,7 +29,7 @@ namespace KoiSmart.Controllers
             registerForm.Show();
         }
 
-        // LOGIN 
+        // LOGIN dengan navigation berdasarkan role
         public Akun Login(string email, string password)
         {
             try
@@ -117,6 +117,12 @@ namespace KoiSmart.Controllers
                 MessageBox.Show($"REGISTER ERROR: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
+        }
+
+        // Logout
+        public void Logout()
+        {
+            AppSession.Logout();
         }
     }
 }

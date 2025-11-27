@@ -59,5 +59,95 @@ namespace KoiSmart.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Btn_Halaman_Utama_Adm_Hal_Utama_1 {
+            get {
+                object obj = ResourceManager.GetObject("Btn_Halaman Utama_Adm_Hal Utama 1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Btn_Laporan_Transaksi_Adm_Hal_Utama_1 {
+            get {
+                object obj = ResourceManager.GetObject("Btn_Laporan Transaksi_Adm_Hal Utama 1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Btn_Logout_Adm_Hal_Utama_1 {
+            get {
+                object obj = ResourceManager.GetObject("Btn_Logout_Adm_Hal Utama 1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Btn_Review_Pelanggan_Adm_Hal_Utama_1 {
+            get {
+                object obj = ResourceManager.GetObject("Btn_Review Pelanggan_Adm_Hal Utama 1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Btn_Riwayat_Transaksi_Adm_Hal_Utama_1 {
+            get {
+                object obj = ResourceManager.GetObject("Btn_Riwayat Transaksi_Adm_Hal Utama 1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Btn_Tambah_Ikan_Adm_Hal_Utama_1 {
+            get {
+                object obj = ResourceManager.GetObject("Btn_Tambah Ikan_Adm_Hal Utama 1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Btn_Transaksi_Penjualan_Adm_Hal_Utama_1 {
+            get {
+                object obj = ResourceManager.GetObject("Btn_Transaksi Penjualan_Adm_Hal Utama 1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap FormTambahDataIkan_Adm {
+            get {
+                object obj = ResourceManager.GetObject("FormTambahDataIkan_Adm", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap HalUtama_Adm {
+            get {
+                object obj = ResourceManager.GetObject("HalUtama_Adm", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }
