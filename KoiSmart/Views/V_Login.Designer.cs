@@ -122,6 +122,7 @@
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = (Image)resources.GetObject("$this.BackgroundImage");
+            BackgroundImageLayout = ImageLayout.Stretch;
             ClientSize = new Size(1403, 772);
             Controls.Add(LbToRegister);
             Controls.Add(label3);
@@ -130,6 +131,7 @@
             Controls.Add(label1);
             Controls.Add(TBPwLogin);
             Controls.Add(TBEmailLogin);
+            DoubleBuffered = true;
             Name = "V_Login";
             Text = "V_Login";
             Load += V_Login_Load;

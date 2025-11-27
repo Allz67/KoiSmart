@@ -60,9 +60,11 @@
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = (Image)resources.GetObject("$this.BackgroundImage");
+            BackgroundImageLayout = ImageLayout.Stretch;
             ClientSize = new Size(1391, 769);
             Controls.Add(BttnLogin);
             Controls.Add(BttnRegister);
+            DoubleBuffered = true;
             Name = "V_Auth";
             Text = "V_Auth";
             Load += V_Auth_Load;

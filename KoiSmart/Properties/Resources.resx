@@ -118,31 +118,46 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="Btn_Tambah Ikan_Adm_Hal Utama 1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Btn_Tambah Ikan_Adm_Hal Utama 1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Btn_Review Pelanggan_Adm_Hal Utama 1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Btn_Review Pelanggan_Adm_Hal Utama 1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Btn_Riwayat Transaksi_Adm_Hal Utama 1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Btn_Riwayat Transaksi_Adm_Hal Utama 1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="HalUtama_Adm" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\HalUtama_Adm.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Btn_Halaman Utama_Adm_Hal Utama 1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Btn_Halaman Utama_Adm_Hal Utama 1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Btn_Transaksi Penjualan_Adm_Hal Utama 1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Btn_Transaksi Penjualan_Adm_Hal Utama 1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Btn_Review Pelanggan_Adm_Hal Utama 1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Btn_Review Pelanggan_Adm_Hal Utama 1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="FormTambahDataIkan_Adm" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\FormTambahDataIkan_Adm.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Btn_Logout_Adm_Hal Utama 1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Btn_Logout_Adm_Hal Utama 1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="kotak_ikan" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\kotak_ikan.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="refresh1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\refresh1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Btn_Laporan Transaksi_Adm_Hal Utama 1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Btn_Laporan Transaksi_Adm_Hal Utama 1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="FormTambahDataIkan_Adm" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\FormTambahDataIkan_Adm.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="refresh" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\refresh.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Btn_Transaksi Penjualan_Adm_Hal Utama 1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Btn_Transaksi Penjualan_Adm_Hal Utama 1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Btn_Halaman Utama_Adm_Hal Utama 1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Btn_Halaman Utama_Adm_Hal Utama 1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="HalUtama_Adm" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\HalUtama_Adm.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="HalUtama_Adm1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\HalUtama_Adm1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Btn_Tambah Ikan_Adm_Hal Utama 1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Btn_Tambah Ikan_Adm_Hal Utama 1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ikan gambar" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ikan gambar.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
