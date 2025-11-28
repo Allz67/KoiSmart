@@ -2,9 +2,10 @@
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using KoiSmart.Controllers;       // Akses TransaksiController
-using KoiSmart.Helpers;           // Akses CartSession & AppSession
-using KoiSmart.Views.Components;  // Akses CardCheckoutItem
+using KoiSmart.Controllers;        // Akses TransaksiController
+using KoiSmart.Helpers;            // Akses CartSession & AppSession
+using KoiSmart.Models;             // Akses Model
+using KoiSmart.Views.Components;   // Akses CardCheckoutItem
 
 namespace KoiSmart.Views
 {
@@ -25,36 +26,41 @@ namespace KoiSmart.Views
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
 
-            // --- TEMBAK LANGSUNG DISINI ---
-            // Ini memaksa data dimuat DETIK ITU JUGA saat form dibuat.
+            // --- JURUS PAKSA MUAT DATA (Di Constructor) ---
             LoadDataKeranjang();
         }
 
         private void V_DetailPesanan_Load(object sender, EventArgs e)
         {
-            
+            // Event Load Form ini Boleh Kosong karena Logic pemuatan data sudah di Constructor.
         }
 
         // --- 1. LOAD DATA DARI KERANJANG ---
         private void LoadDataKeranjang()
         {
-            // --- DEBUGGING: Cek jumlah data ---
-            MessageBox.Show("Jumlah barang di keranjang: " + CartSession.Items.Count);
-            // ----------------------------------
-
             FlpItems.Controls.Clear();
+
+            // Pastikan kita dapat data dari CartSession
+            if (CartSession.Items == null || CartSession.Items.Count == 0)
+            {
+                // Tampilkan pesan kosong jika keranjang kosong
+                // (Ini penting jika user somehow bisa masuk ke form ini tanpa belanja)
+                // Label pesan kosong opsional
+                LblTotalBayar.Text = "Rp 0";
+                BtnBuatPesanan.Enabled = false;
+                return;
+            }
 
             foreach (var item in CartSession.Items)
             {
-                // Debug: Cek apakah looping jalan
-                // MessageBox.Show("Menambahkan: " + item.Ikan.jenis_ikan);
-
                 CardCheckoutItem card = new CardCheckoutItem();
                 card.SetData(item);
                 FlpItems.Controls.Add(card);
             }
 
+            // Tampilkan Total Harga
             LblTotalBayar.Text = "Rp " + CartSession.GetTotal().ToString("N0");
+            BtnBuatPesanan.Enabled = true; // Aktifkan tombol
         }
 
         // --- 2. TOMBOL UPLOAD BUKTI ---
@@ -66,12 +72,18 @@ namespace KoiSmart.Views
             if (opf.ShowDialog() == DialogResult.OK)
             {
                 // 1. Tampilkan di Layar
-                PbBuktiBayar.Image = Image.FromFile(opf.FileName);
-                PbBuktiBayar.SizeMode = PictureBoxSizeMode.Zoom;
+                // Gunakan using statement agar MemoryStream ditutup
+                using (var stream = new FileStream(opf.FileName, FileMode.Open, FileAccess.Read))
+                {
+                    // Membuat salinan gambar agar file tidak terkunci oleh aplikasi
+                    Image uploadedImage = Image.FromStream(stream);
 
-                // 2. Simpan ke Variabel Byte[] (Pake Helper kamu)
-                // Gak perlu 'using MemoryStream' lagi, udah diurus Helper
-                _buktiBayarBytes = ImageHelper.ImageToBinary(PbBuktiBayar.Image);
+                    PbBuktiBayar.Image = uploadedImage;
+                    PbBuktiBayar.SizeMode = PictureBoxSizeMode.Zoom;
+
+                    // 2. Simpan ke Variabel Byte[] (Pake Helper)
+                    _buktiBayarBytes = ImageHelper.ImageToBinary(uploadedImage);
+                }
             }
         }
 
@@ -82,14 +94,14 @@ namespace KoiSmart.Views
             if (_buktiBayarBytes == null)
             {
                 MessageBox.Show("Mohon unggah bukti pembayaran (Struk Transfer) terlebih dahulu!",
-                                "Bukti Kosong", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                 "Bukti Kosong", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // B. Validasi: Harus Login
-            if (!AppSession.IsAuthenticated)
+            // B. Validasi: Cek ulang Cart tidak kosong (double protection)
+            if (CartSession.Items.Count == 0)
             {
-                MessageBox.Show("Sesi habis. Silakan login ulang.", "Error");
+                MessageBox.Show("Keranjang belanja kosong. Silakan kembali ke katalog.", "Error");
                 this.Close();
                 return;
             }
@@ -105,19 +117,17 @@ namespace KoiSmart.Views
 
             if (sukses)
             {
-                MessageBox.Show("Pesanan Berhasil Dibuat!\nStatus saat ini: PENDING.\nSilakan tunggu konfirmasi Admin.",
-                                "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Pesanan Berhasil Dibuat! Status saat ini: PENDING.",
+                                 "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                // D. BERSIHKAN KERANJANG (Karena udah dibeli)
+                // D. BERSIHKAN KERANJANG & TUTUP FORM
                 CartSession.Clear();
-
-                // E. TUTUP FORM & UPDATE DASHBOARD
-                this.DialogResult = DialogResult.OK;
+                this.DialogResult = DialogResult.OK; // Sinyal sukses ke Dashboard
                 this.Close();
             }
             else
             {
-                MessageBox.Show("Gagal membuat pesanan. Silakan coba lagi.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Gagal membuat pesanan. Periksa log database.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

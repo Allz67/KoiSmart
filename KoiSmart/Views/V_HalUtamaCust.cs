@@ -244,7 +244,15 @@ namespace KoiSmart.Views
         }
 
         // Kosongan
-        private void BttnTransaksiPembelian_Click(object sender, EventArgs e) { }
+        private void BttnTransaksiPembelian_Click(object sender, EventArgs e)
+        {
+            // 1. Buka form riwayat transaksi
+            V_HalTransaksi formTransaksi = new V_HalTransaksi();
+            formTransaksi.Show();
+
+            // 2. Tutup form utama customer
+            this.Close();
+        }
         private void BttnRiwayatTransaksi_Click(object sender, EventArgs e) { }
         private void BttnReview_Click(object sender, EventArgs e) { }
     }

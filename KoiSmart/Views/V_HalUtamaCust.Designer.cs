@@ -98,6 +98,7 @@
             // BttnHalUtama
             // 
             BttnHalUtama.BackgroundImage = Properties.Resources.Btn_Halaman_Utama_Adm_Hal_Utama_1;
+            BttnHalUtama.FlatStyle = FlatStyle.Flat;
             BttnHalUtama.Location = new Point(70, 226);
             BttnHalUtama.Margin = new Padding(2);
             BttnHalUtama.Name = "BttnHalUtama";

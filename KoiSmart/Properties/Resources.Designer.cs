@@ -243,6 +243,46 @@ namespace KoiSmart.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap btnhalutamawhite {
+            get {
+                object obj = ResourceManager.GetObject("btnhalutamawhite", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap btnhalutamawhite1 {
+            get {
+                object obj = ResourceManager.GetObject("btnhalutamawhite1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap btnhalutamawhite2 {
+            get {
+                object obj = ResourceManager.GetObject("btnhalutamawhite2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap btntransaksipembelianblue {
+            get {
+                object obj = ResourceManager.GetObject("btntransaksipembelianblue", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap detail_ikan {
             get {
                 object obj = ResourceManager.GetObject("detail_ikan", resourceCulture);
@@ -296,6 +336,16 @@ namespace KoiSmart.Properties {
         internal static System.Drawing.Bitmap frame_foto_detail_ikan {
             get {
                 object obj = ResourceManager.GetObject("frame foto detail ikan", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap halTransaksi {
+            get {
+                object obj = ResourceManager.GetObject("halTransaksi", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

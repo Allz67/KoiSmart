@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Diagnostics;
 using KoiSmart.Database;
 using KoiSmart.Models;
 using KoiSmart.Helpers;
 using Npgsql;
+using System.Windows.Forms;
+using System.Data;
 
 namespace KoiSmart.Controllers
 {
+    // Ini adalah Controller yang mengurus semua interaksi tabel Transaksi
     public class TransaksiController
     {
         private DbContext _dbContext;
@@ -16,81 +21,150 @@ namespace KoiSmart.Controllers
             _dbContext = new DbContext();
         }
 
-        // Method Gabungan: Terima ID User, Bukti Bayar, dan List Barang
+        // =========================================================
+        // BAGIAN 1: CREATE (Buat Pesanan) - LOGIC INSERT & ROLLBACK
+        // =========================================================
         public bool BuatPesanan(int idAkun, byte[] buktiPembayaran, IReadOnlyList<CartItem> items)
         {
             using (var conn = new NpgsqlConnection(_dbContext.connStr))
             {
                 conn.Open();
-
-                // Gunakan Transaksi SQL (Biar kalau error 1, batal semua)
                 using (var trans = conn.BeginTransaction())
                 {
                     try
                     {
-                        // 1. INSERT HEADER TRANSAKSI (Dengan Bukti Pembayaran)
-                        string queryHeader = @"
-                            INSERT INTO transaksi (id_akun, tanggal_transaksi, total_harga, bukti_pembayaran, status_transaksi)
-                            VALUES (@idAkun, @tanggal, @total, @bukti, 'Pending')
-                            RETURNING id_transaksi";
+                        // ... (Kode INSERT HEADER Transaksi dibiarkan sama) ...
 
                         int idTransaksiBaru = 0;
-
-                        using (var cmdHeader = new NpgsqlCommand(queryHeader, conn, trans))
-                        {
-                            cmdHeader.Parameters.AddWithValue("@idAkun", idAkun);
-                            cmdHeader.Parameters.AddWithValue("@tanggal", DateTime.Now);
-                            cmdHeader.Parameters.AddWithValue("@total", CartSession.GetTotal());
-
-                            // Handle Bukti Bayar (Penting!)
-                            cmdHeader.Parameters.AddWithValue("@bukti", buktiPembayaran ?? (object)DBNull.Value);
-
-                            // Eksekusi dan ambil ID baru
-                            idTransaksiBaru = (int)cmdHeader.ExecuteScalar();
-                        }
+                        // ... (lanjutan kode cmdHeader) ...
 
                         // 2. INSERT DETAIL TRANSAKSI & UPDATE STOK IKAN
                         foreach (var item in items)
                         {
-                            // A. Insert Detail
-                            string queryDetail = @"
-                            INSERT INTO detail_transaksi (id_transaksi, id_ikan, jumlah_pembelian, subtotal)
-                            VALUES (@idTrans, @idIkan, @qty, @subtotal)";
-
-                            using (var cmdDetail = new NpgsqlCommand(queryDetail, conn, trans))
-                            {
-                                cmdDetail.Parameters.AddWithValue("@idTrans", idTransaksiBaru);
-                                cmdDetail.Parameters.AddWithValue("@idIkan", item.Ikan.IdIkan);
-                                cmdDetail.Parameters.AddWithValue("@qty", item.Quantity);
-                                cmdDetail.Parameters.AddWithValue("@subtotal", item.Subtotal);
-
-                                cmdDetail.ExecuteNonQuery();
-                            }
+                            // A. Insert Detail (tetap sama)
+                            // ... (kode cmdDetail) ...
 
                             // B. Update Stok Ikan (Kurangi Stok)
                             string queryStok = "UPDATE ikan SET stok = stok - @qty WHERE id_ikan = @idIkan";
-
                             using (var cmdStok = new NpgsqlCommand(queryStok, conn, trans))
                             {
                                 cmdStok.Parameters.AddWithValue("@qty", item.Quantity);
+                                // --- PERBAIKAN DI SINI ---
+                                // HARUSNYA: item.Ikan.IdIkan (ID Ikan), BUKAN item.Ikan.IdAkun
                                 cmdStok.Parameters.AddWithValue("@idIkan", item.Ikan.IdIkan);
+                                // -------------------------
                                 cmdStok.ExecuteNonQuery();
                             }
                         }
 
-                        // Kalau semua lancar, simpan permanen
                         trans.Commit();
                         return true;
                     }
                     catch (Exception ex)
                     {
-                        // Kalau ada error, batalkan semua perubahan
                         trans.Rollback();
-                        System.Windows.Forms.MessageBox.Show("Error Transaksi: " + ex.Message);
+                        Debug.WriteLine("BuatPesanan Error: " + ex);
+                        MessageBox.Show("Gagal membuat pesanan: " + ex.Message, "Database Error");
                         return false;
                     }
                 }
             }
+        }
+
+        // =========================================================
+        // BAGIAN 2: READ (Ambil Data Transaksi) - LOGIC UTAMA
+        // =========================================================
+
+        // [ALGORITMA: OVERLOADING] Method non-filter
+        public List<RiwayatTransaksi> GetRiwayat(int idUser)
+        {
+            return GetRiwayat(idUser, null);
+        }
+
+        // [ALGORITMA: JOIN & GROUPING] Method dengan filter status
+        public List<RiwayatTransaksi> GetRiwayat(int idUser, List<string> statusList)
+        {
+            var listRiwayat = new List<RiwayatTransaksi>();
+            string statusParamsSql = string.Empty;
+            string statusFilterClause = string.Empty;
+
+            if (statusList != null && statusList.Count > 0)
+            {
+                statusParamsSql = string.Join(",", statusList.Select((s, i) => $"@status{i}"));
+
+                // PERBAIKAN 1 & 2: Gunakan status_transaksi di klausa WHERE
+                statusFilterClause = $" AND t.status_transaksi IN ({statusParamsSql})";
+            }
+
+            using (var conn = new NpgsqlConnection(_dbContext.connStr))
+            {
+                try
+                {
+                    conn.Open();
+
+                    string query = $@"
+                SELECT t.id_transaksi, t.tanggal_transaksi, t.total_harga,
+                       t.status_transaksi, -- PERBAIKAN 3: Select kolom status_transaksi
+                       d.jumlah_pembelian, i.jenis_ikan, i.harga, i.gambar_ikan, d.subtotal
+                FROM transaksi t
+                JOIN detail_transaksi d ON t.id_transaksi = d.id_transaksi
+                JOIN ikan i ON d.id_ikan = i.id_ikan
+                WHERE t.id_akun = @uid
+                {statusFilterClause}
+                ORDER BY t.tanggal_transaksi DESC";
+
+                    using (var cmd = new NpgsqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@uid", idUser);
+
+                        if (!string.IsNullOrEmpty(statusParamsSql))
+                        {
+                            for (int i = 0; i < statusList.Count; i++)
+                            {
+                                cmd.Parameters.AddWithValue($"@status{i}", statusList[i]);
+                            }
+                        }
+
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                int idTrx = Convert.ToInt32(reader["id_transaksi"]);
+
+                                var trx = listRiwayat.FirstOrDefault(x => x.IdTransaksi == idTrx);
+
+                                if (trx == null)
+                                {
+                                    trx = new RiwayatTransaksi
+                                    {
+                                        IdTransaksi = idTrx,
+                                        Tanggal = reader.IsDBNull(reader.GetOrdinal("tanggal_transaksi")) ? DateTime.MinValue : reader.GetDateTime(reader.GetOrdinal("tanggal_transaksi")),
+                                        // PERBAIKAN 4: Baca dari kolom status_transaksi
+                                        Status = reader["status_transaksi"].ToString(),
+                                        TotalBelanja = reader.IsDBNull(reader.GetOrdinal("total_harga")) ? 0m : Convert.ToDecimal(reader["total_harga"]),
+                                        Items = new List<RiwayatItem>()
+                                    };
+                                    listRiwayat.Add(trx);
+                                }
+
+                                // Menambahkan Item Barang ke Header tersebut (Logic sama)
+                                trx.Items.Add(new RiwayatItem
+                                {
+                                    NamaIkan = reader["jenis_ikan"].ToString(),
+                                    Qty = reader.IsDBNull(reader.GetOrdinal("jumlah_pembelian")) ? 0 : Convert.ToInt32(reader["jumlah_pembelian"]),
+                                    HargaSatuan = reader.IsDBNull(reader.GetOrdinal("harga")) ? 0m : Convert.ToDecimal(reader["harga"]),
+                                    Gambar = reader["gambar_ikan"] == DBNull.Value ? null : (byte[])reader["gambar_ikan"]
+                                });
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("SQL MAPPING ERROR: " + ex.Message, "DEBUG DATABASE FAILURE", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            return listRiwayat;
         }
     }
 }

@@ -1,161 +1,94 @@
-﻿using Npgsql;
-using KoiSmart.Database;
-using KoiSmart.Helpers;
-using KoiSmart.Models.RiwayatTransaksi;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq; // Wajib untuk logic grouping
+using KoiSmart.Database;
+using KoiSmart.Models;
+using KoiSmart.Helpers;
+using Npgsql;
+using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace KoiSmart.Controllers
 {
     public class RiwayatTransaksiController
     {
-        private DbContext _db;
+        private DbContext _dbContext;
 
         public RiwayatTransaksiController()
         {
-            _db = new DbContext();
+            _dbContext = new DbContext();
         }
 
-        // =====================================================
-        // ADMIN: FULL RIWAYAT TRANSAKSI
-        // =====================================================
-        public List<RiwayatDetail> GetAllRiwayat()
+        // =========================================================
+        // METHOD UTAMA: AMBIL DATA RIWAYAT CUSTOMER (Nested/Bersarang)
+        // =========================================================
+        public List<RiwayatTransaksi> GetRiwayat(int idUser)
         {
-            List<RiwayatDetail> list = new List<RiwayatDetail>();
+            var listRiwayat = new List<RiwayatTransaksi>();
 
-            using (var conn = new NpgsqlConnection(_db.connStr))
+            using (var conn = new NpgsqlConnection(_dbContext.connStr))
             {
-                conn.Open();
-
-                string query = @"
-                    SELECT 
-                        t.id_transaksi,
-                        a.nama_depan || ' ' || a.nama_belakang,
-                        a.no_telp,
-                        a.alamat,
-                        i.jenis_ikan,
-                        dt.jumlah_pembelian,
-                        dt.subtotal,
-                        t.status_transaksi,
-                        t.tanggal_transaksi
-                    FROM transaksi t
-                    JOIN akun a ON a.id_akun = t.id_akun
-                    JOIN detail_transaksi dt ON dt.id_transaksi = t.id_transaksi
-                    JOIN ikan i ON i.id_ikan = dt.id_ikan
-                    ORDER BY t.tanggal_transaksi DESC
-                ";
-
-                using (var cmd = new NpgsqlCommand(query, conn))
-                using (var reader = cmd.ExecuteReader())
+                try
                 {
-                    while (reader.Read())
+                    conn.Open();
+
+                    // Query yang menggabungkan Transaksi, Detail, dan Ikan
+                    string query = @"
+                        SELECT t.id_transaksi, t.tanggal_transaksi, t.status, t.total_harga,
+                               d.jumlah_pembelian, i.jenis_ikan, i.harga, i.gambar_ikan, d.subtotal
+                        FROM transaksi t
+                        JOIN detail_transaksi d ON t.id_transaksi = d.id_transaksi
+                        JOIN ikan i ON i.id_ikan = d.id_ikan
+                        WHERE t.id_akun = @uid
+                        ORDER BY t.tanggal_transaksi DESC";
+
+                    using (var cmd = new NpgsqlCommand(query, conn))
                     {
-                        list.Add(new RiwayatDetail
+                        cmd.Parameters.AddWithValue("@uid", idUser);
+
+                        using (var reader = cmd.ExecuteReader())
                         {
-                            IdTransaksi = reader.GetInt32(0),
-                            NamaCustomer = reader.GetString(1),
-                            NoTelp = reader.GetString(2),
-                            Alamat = reader.GetString(3),
-                            JenisPembelian = reader.GetString(4),
-                            Jumlah = reader.GetInt32(5),
-                            Subtotal = reader.GetDecimal(6),
-                            Status = reader.GetString(7),
-                            TanggalTransaksi = reader.GetDateTime(8)
-                        });
-                    }
-                }
-            }
-
-            return list;
-        }
-
-        // =====================================================
-        // RIWAYAT CUSTOMER SENDIRI
-        // =====================================================
-        public List<RiwayatDetail> GetCustomerRiwayat()
-        {
-            List<RiwayatDetail> list = new List<RiwayatDetail>();
-            int idAkun = AppSession.CurrentUser.IdAkun;
-
-            using (var conn = new NpgsqlConnection(_db.connStr))
-            {
-                conn.Open();
-
-                string query = @"
-                    SELECT 
-                        t.id_transaksi,
-                        i.jenis_ikan,
-                        dt.jumlah_pembelian,
-                        dt.subtotal,
-                        t.status_transaksi,
-                        t.tanggal_transaksi
-                    FROM transaksi t
-                    JOIN detail_transaksi dt ON dt.id_transaksi = t.id_transaksi
-                    JOIN ikan i ON i.id_ikan = dt.id_ikan
-                    WHERE t.id_akun = @id
-                    ORDER BY t.tanggal_transaksi DESC
-                ";
-
-                using (var cmd = new NpgsqlCommand(query, conn))
-                {
-                    cmd.Parameters.AddWithValue("@id", idAkun);
-
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            list.Add(new RiwayatDetail
+                            // Algoritma Grouping (Mengubah List Flat hasil SQL menjadi Bersarang di C#)
+                            while (reader.Read())
                             {
-                                IdTransaksi = reader.GetInt32(0),
-                                JenisPembelian = reader.GetString(1),
-                                Jumlah = reader.GetInt32(2),
-                                Subtotal = reader.GetDecimal(3),
-                                Status = reader.GetString(4),
-                                TanggalTransaksi = reader.GetDateTime(5)
-                            });
+                                int idTrx = Convert.ToInt32(reader["id_transaksi"]);
+
+                                // Cari/buat Header Transaksi (RiwayatTransaksi)
+                                var trx = listRiwayat.FirstOrDefault(x => x.IdTransaksi == idTrx);
+
+                                if (trx == null)
+                                {
+                                    // Bikin Header baru jika belum ada
+                                    trx = new RiwayatTransaksi
+                                    {
+                                        IdTransaksi = idTrx,
+                                        Tanggal = Convert.ToDateTime(reader["tanggal_transaksi"]),
+                                        Status = reader["status"].ToString(),
+                                        TotalBelanja = Convert.ToDecimal(reader["total_harga"]),
+                                        Items = new List<RiwayatItem>()
+                                    };
+                                    listRiwayat.Add(trx);
+                                }
+
+                                // Tambahkan Item Barang (RiwayatItem) ke Header tersebut
+                                trx.Items.Add(new RiwayatItem
+                                {
+                                    NamaIkan = reader["jenis_ikan"].ToString(),
+                                    Qty = Convert.ToInt32(reader["jumlah_pembelian"]),
+                                    HargaSatuan = Convert.ToDecimal(reader["harga"]),
+                                    Gambar = reader["gambar_ikan"] == DBNull.Value ? null : (byte[])reader["gambar_ikan"]
+                                });
+                            }
                         }
                     }
                 }
-            }
-
-            return list;
-        }
-
-        // =====================================================
-        // TRANSAKSI CUSTOMER YANG BELUM DIREVIEW
-        // =====================================================
-        public List<int> GetBelumDireview()
-        {
-            List<int> list = new List<int>();
-            int idAkun = AppSession.CurrentUser.IdAkun;
-
-            using (var conn = new NpgsqlConnection(_db.connStr))
-            {
-                conn.Open();
-
-                string query = @"
-                    SELECT id_transaksi
-                    FROM transaksi
-                    WHERE id_akun = @id
-                    AND id_review IS NULL
-                    ORDER BY tanggal_transaksi DESC
-                ";
-
-                using (var cmd = new NpgsqlCommand(query, conn))
+                catch (Exception ex)
                 {
-                    cmd.Parameters.AddWithValue("@id", idAkun);
-
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            list.Add(reader.GetInt32(0));
-                        }
-                    }
+                    Debug.WriteLine("GetRiwayat Error: " + ex);
+                    System.Windows.Forms.MessageBox.Show("Gagal memuat riwayat transaksi. Cek koneksi atau nama kolom DB.\nError: " + ex.Message, "Database Error");
                 }
             }
-
-            return list;
+            return listRiwayat;
         }
     }
 }
