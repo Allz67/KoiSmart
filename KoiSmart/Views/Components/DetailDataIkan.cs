@@ -11,61 +11,67 @@ namespace KoiSmart.Views.Components
 {
     public partial class DetailDataIkan : UserControl
     {
-        private Ikan? _currentIkan;
+        private Ikan _currentIkan;
+        // Controller buat ambil data terbaru
+        private IkanController _controller;
 
         public DetailDataIkan()
         {
             InitializeComponent();
+            _controller = new IkanController();
 
-            // Hook event BtnBalik (designer already created BtnBalik control)
+            // --- INI STYLE "KOTOR" (Manual Wiring) BIAR TOMBOL LANGSUNG JALAN ---
+            // Gak perlu setting di Designer, langsung tembak sini
             BtnBalik.Click += BtnBalik_Click;
-
-            // Hook Edit & Hapus events and ensure they are clickable / visible / on top
             BtnEdit.Click += BtnEdit_Click;
             BtnHapus.Click += BtnHapus_Click;
 
+            // Pastikan tombol nyala
             BtnEdit.Enabled = true;
             BtnHapus.Enabled = true;
             BtnEdit.Visible = true;
             BtnHapus.Visible = true;
-
-            // Bring buttons to front in case other controls overlap them
             BtnEdit.BringToFront();
             BtnHapus.BringToFront();
         }
 
-        // Set data langsung dari object Ikan (font/size sudah ditentukan di Designer)
         public void SetData(Ikan ikan)
         {
-            if (ikan == null) throw new ArgumentNullException(nameof(ikan));
+            if (ikan == null) return;
 
             _currentIkan = ikan;
 
-            // Isi teks sesuai permintaan (font/size dipertahankan dari Designer)
-            LblJenis.Text = ikan.jenis_ikan ?? string.Empty;
+            // Mapping Text
+            LblJenis.Text = ikan.jenis_ikan;
             LblGender.Text = ikan.gender.ToString();
-            LblPanjang.Text = ikan.panjang.ToString();
+            LblPanjang.Text = ikan.panjang.ToString() + " cm";
             LblGrade.Text = ikan.grade.ToString();
-            LblHarga.Text = ikan.harga.ToString("N0");
+            LblHarga.Text = "Rp " + ikan.harga.ToString("N0");
             LblStok.Text = $"Stok: {ikan.stok}";
-            LblNama.Text = ikan.jenis_ikan ?? string.Empty;
+            LblNama.Text = ikan.jenis_ikan;
 
-            // Set gambar ke PbxInputIkan (gunakan MemoryStream agar file tidak terkunci)
+            // Mapping Gambar
             SetPictureFromBytes(ikan.gambar_ikan);
         }
 
-        // Helper: isi PictureBox dari byte[] aman (dispose image lama)
-        private void SetPictureFromBytes(byte[]? bytes)
+        // --- METHOD BARU: REFRESH SETELAH EDIT ---
+        private void RefreshData()
+        {
+            // Tarik data terbaru dari DB berdasarkan ID
+            var ikanTerbaru = _controller.GetById(_currentIkan.IdIkan);
+
+            if (ikanTerbaru != null)
+            {
+                // Update tampilan layar dengan data baru
+                SetData(ikanTerbaru);
+            }
+        }
+
+        private void SetPictureFromBytes(byte[] bytes)
         {
             try
             {
-                // dispose image lama jika ada
-                if (PbxInputIkan.Image != null)
-                {
-                    var old = PbxInputIkan.Image;
-                    PbxInputIkan.Image = null;
-                    old.Dispose();
-                }
+                if (PbxInputIkan.Image != null) PbxInputIkan.Image.Dispose();
 
                 if (bytes == null || bytes.Length == 0)
                 {
@@ -74,124 +80,83 @@ namespace KoiSmart.Views.Components
                     return;
                 }
 
-                using var ms = new MemoryStream(bytes);
-                var img = Image.FromStream(ms);
-                PbxInputIkan.Image = (Image)img.Clone();
-                PbxInputIkan.SizeMode = PictureBoxSizeMode.Zoom;
-                PbxInputIkan.BackColor = Color.Transparent;
+                using (var ms = new MemoryStream(bytes))
+                {
+                    PbxInputIkan.Image = Image.FromStream(ms);
+                    PbxInputIkan.SizeMode = PictureBoxSizeMode.Zoom;
+                }
             }
             catch
             {
-                PbxInputIkan.Image = null;
-                PbxInputIkan.BackColor = Color.LightGray;
+                PbxInputIkan.BackColor = Color.Gray;
             }
         }
 
-        // Optional: load by id (internal use). Not required if caller passes Ikan object.
-        public void LoadById(int id)
-        {
-            var controller = new IkanController();
-            var ikan = controller.GetById(id);
-            if (ikan != null)
-            {
-                SetData(ikan);
-            }
-            else
-            {
-                MessageBox.Show("Data ikan tidak ditemukan.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-        }
+        // --- LOGIKA TOMBOL ---
 
-        // BtnEdit: open edit form (V_FormUbahIkan) with current ikan
-        private void BtnEdit_Click(object? sender, EventArgs e)
+        // 1. EDIT (LOGIKA SUDAH DIPERBAIKI)
+        private void BtnEdit_Click(object sender, EventArgs e)
         {
-            if (_currentIkan == null)
-            {
-                MessageBox.Show("Tidak ada data ikan yang dipilih.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
+            if (_currentIkan == null) return;
 
-            try
+            // Buka form ubah
+            using (var form = new V_FormUbahIkan(_currentIkan))
             {
-                using var form = new V_FormUbahIkan(_currentIkan);
-                var result = form.ShowDialog(this);
-                if (result == DialogResult.OK)
+                // Kalau user klik Simpan (OK)
+                if (form.ShowDialog() == DialogResult.OK)
                 {
-                    // close parent form/popup so caller can refresh
-                    var parentForm = this.FindForm();
-                    parentForm?.Close();
+                    // DULU: Close Parent
+                    // SEKARANG: Refresh Data aja, jangan ditutup
+                    RefreshData();
+
+                    MessageBox.Show("Data berhasil diperbarui!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Gagal membuka form ubah: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
         }
 
-        // BtnHapus: confirm, delete via controller, close popup on success
-        private void BtnHapus_Click(object? sender, EventArgs e)
+        // 2. HAPUS (LOGIKA TETAP: KELUAR SETELAH HAPUS)
+        private void BtnHapus_Click(object sender, EventArgs e)
         {
-            if (_currentIkan == null)
-            {
-                MessageBox.Show("Tidak ada data ikan yang dipilih.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
+            if (_currentIkan == null) return;
 
-            var confirm = MessageBox.Show("Yakin ingin menghapus data ikan ini?", "Konfirmasi Hapus", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-            if (confirm != DialogResult.Yes) return;
+            var confirm = MessageBox.Show("Yakin ingin menghapus data ini?", "Konfirmasi", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
-            try
+            if (confirm == DialogResult.Yes)
             {
-                var controller = new IkanController();
-                bool berhasil = controller.DeleteIkan(_currentIkan.IdIkan);
+                bool berhasil = _controller.DeleteIkan(_currentIkan.IdIkan);
 
                 if (berhasil)
                 {
-                    MessageBox.Show("Data ikan berhasil dihapus.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    var parentForm = this.FindForm();
-                    parentForm?.Close();
+                    MessageBox.Show("Data berhasil dihapus.", "Info");
+
+                    // Kasih tau Dashboard buat refresh
+                    var parent = this.FindForm();
+                    if (parent != null)
+                    {
+                        parent.DialogResult = DialogResult.OK;
+                        parent.Close();
+                    }
                 }
                 else
                 {
-                    MessageBox.Show("Gagal menghapus data ikan. Cek koneksi.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Gagal menghapus.", "Error");
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Terjadi error saat menghapus: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        // BtnBalik behavior: tutup parent form (jika ada) and show main
-        private void BtnBalik_Click(object? sender, EventArgs e)
+        // 3. BALIK (LOGIKA TETAP)
+        private void BtnBalik_Click(object sender, EventArgs e)
         {
-            try
+            var parent = this.FindForm();
+            if (parent != null)
             {
-                // Tutup parent form jika ada (misal popup)
-                var parentForm = this.FindForm();
-                parentForm?.Close();
-
-                // Jika V_HalUtamaAdmin sudah terbuka, bawa ke depan; jika belum, buka baru.
-                var existing = Application.OpenForms.OfType<V_HalUtamaAdmin>().FirstOrDefault();
-                if (existing != null)
-                {
-                    existing.BringToFront();
-                }
-                else
-                {
-                    var main = new V_HalUtamaAdmin();
-                    main.Show();
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Gagal kembali ke halaman utama: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Kita anggap balik itu juga refresh dashboard (biar aman)
+                parent.DialogResult = DialogResult.OK;
+                parent.Close();
             }
         }
 
-        private void panel1_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
+        // Method kosong buat ngilangin error designer panel1_Paint
+        private void panel1_Paint(object sender, PaintEventArgs e) { }
     }
 }

@@ -48,7 +48,8 @@
             // 
             // panel1
             // 
-            panel1.BackgroundImage = Properties.Resources.show_hal_detail_ikan2;
+            panel1.BackgroundImage = Properties.Resources.detail_ikan;
+            panel1.BackgroundImageLayout = ImageLayout.Zoom;
             panel1.Controls.Add(tableLayoutPanel1);
             panel1.Controls.Add(BtnBalik);
             panel1.Controls.Add(LblNama);
@@ -89,10 +90,11 @@
             // 
             LblGender.AutoSize = true;
             LblGender.BackColor = Color.FromArgb(233, 245, 254);
+            LblGender.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             LblGender.Location = new Point(2, 60);
             LblGender.Margin = new Padding(2, 0, 2, 0);
             LblGender.Name = "LblGender";
-            LblGender.Size = new Size(88, 20);
+            LblGender.Size = new Size(92, 20);
             LblGender.TabIndex = 12;
             LblGender.Text = "Gender Ikan";
             // 
@@ -100,10 +102,11 @@
             // 
             LblPanjang.AutoSize = true;
             LblPanjang.BackColor = Color.FromArgb(233, 245, 254);
+            LblPanjang.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             LblPanjang.Location = new Point(2, 120);
             LblPanjang.Margin = new Padding(2, 0, 2, 0);
             LblPanjang.Name = "LblPanjang";
-            LblPanjang.Size = new Size(92, 20);
+            LblPanjang.Size = new Size(98, 20);
             LblPanjang.TabIndex = 13;
             LblPanjang.Text = "Panjang Ikan";
             // 
@@ -111,10 +114,11 @@
             // 
             LblGrade.AutoSize = true;
             LblGrade.BackColor = Color.FromArgb(233, 245, 254);
+            LblGrade.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             LblGrade.Location = new Point(2, 180);
             LblGrade.Margin = new Padding(2, 0, 2, 0);
             LblGrade.Name = "LblGrade";
-            LblGrade.Size = new Size(80, 20);
+            LblGrade.Size = new Size(83, 20);
             LblGrade.TabIndex = 14;
             LblGrade.Text = "Grade Ikan";
             // 
@@ -122,10 +126,11 @@
             // 
             LblHarga.AutoSize = true;
             LblHarga.BackColor = Color.FromArgb(233, 245, 254);
+            LblHarga.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             LblHarga.Location = new Point(2, 240);
             LblHarga.Margin = new Padding(2, 0, 2, 0);
             LblHarga.Name = "LblHarga";
-            LblHarga.Size = new Size(81, 20);
+            LblHarga.Size = new Size(84, 20);
             LblHarga.TabIndex = 15;
             LblHarga.Text = "Harga Ikan";
             // 
@@ -133,10 +138,11 @@
             // 
             LblJenis.AutoSize = true;
             LblJenis.BackColor = Color.FromArgb(233, 245, 254);
+            LblJenis.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             LblJenis.Location = new Point(2, 0);
             LblJenis.Margin = new Padding(2, 0, 2, 0);
             LblJenis.Name = "LblJenis";
-            LblJenis.Size = new Size(71, 20);
+            LblJenis.Size = new Size(75, 20);
             LblJenis.TabIndex = 11;
             LblJenis.Text = "Jenis Ikan";
             // 
@@ -218,6 +224,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackgroundImage = Properties.Resources.show_hal_detail_ikan2;
             Controls.Add(panel1);
             Name = "DetailDataIkan";
             Size = new Size(1260, 772);

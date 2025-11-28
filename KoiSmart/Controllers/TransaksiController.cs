@@ -1,82 +1,96 @@
-﻿using KoiSmart.Helpers;
-using KoiSmart.Models;
-using Npgsql;
+﻿using System;
+using System.Collections.Generic;
 using KoiSmart.Database;
+using KoiSmart.Models;
+using KoiSmart.Helpers;
+using Npgsql;
 
 namespace KoiSmart.Controllers
 {
     public class TransaksiController
     {
-        private DbContext _db;
+        private DbContext _dbContext;
 
         public TransaksiController()
         {
-            _db = new DbContext();
+            _dbContext = new DbContext();
         }
 
-        public int CreateTransaksi()
+        // Method Gabungan: Terima ID User, Bukti Bayar, dan List Barang
+        public bool BuatPesanan(int idAkun, byte[] buktiPembayaran, IReadOnlyList<CartItem> items)
         {
-            int transaksiId = 0;
-            using (var conn = new NpgsqlConnection(_db.connStr))
+            using (var conn = new NpgsqlConnection(_dbContext.connStr))
             {
                 conn.Open();
-                using (var transaction = conn.BeginTransaction())
+
+                // Gunakan Transaksi SQL (Biar kalau error 1, batal semua)
+                using (var trans = conn.BeginTransaction())
                 {
                     try
                     {
-                        // 1. Insert ke transaksi
-                        string queryTransaksi = @"INSERT INTO transaksi (tanggal_transaksi, id_akun, status, total_harga)
-                                                  VALUES (@tanggal, @akun, @status, @total)
-                                                  RETURNING id_transaksi";
+                        // 1. INSERT HEADER TRANSAKSI (Dengan Bukti Pembayaran)
+                        string queryHeader = @"
+                            INSERT INTO transaksi (id_akun, tanggal_transaksi, total_harga, bukti_pembayaran, status_transaksi)
+                            VALUES (@idAkun, @tanggal, @total, @bukti, 'Pending')
+                            RETURNING id_transaksi";
 
-                        using (var cmd = new NpgsqlCommand(queryTransaksi, conn))
+                        int idTransaksiBaru = 0;
+
+                        using (var cmdHeader = new NpgsqlCommand(queryHeader, conn, trans))
                         {
-                            cmd.Parameters.AddWithValue("@tanggal", DateTime.Now);
-                            cmd.Parameters.AddWithValue("@akun", AppSession.CurrentUser.IdAkun);
-                            cmd.Parameters.AddWithValue("@status", "Pending");
-                            cmd.Parameters.AddWithValue("@total", CartSession.GetTotal());
+                            cmdHeader.Parameters.AddWithValue("@idAkun", idAkun);
+                            cmdHeader.Parameters.AddWithValue("@tanggal", DateTime.Now);
+                            cmdHeader.Parameters.AddWithValue("@total", CartSession.GetTotal());
 
-                            transaksiId = (int)cmd.ExecuteScalar();
+                            // Handle Bukti Bayar (Penting!)
+                            cmdHeader.Parameters.AddWithValue("@bukti", buktiPembayaran ?? (object)DBNull.Value);
+
+                            // Eksekusi dan ambil ID baru
+                            idTransaksiBaru = (int)cmdHeader.ExecuteScalar();
                         }
 
-                        // 2. Insert detail transaksi sesuai item di cart
-                        foreach (var item in CartSession.Items)
+                        // 2. INSERT DETAIL TRANSAKSI & UPDATE STOK IKAN
+                        foreach (var item in items)
                         {
-                            string queryDetail = @"INSERT INTO detail_transaksi (id_transaksi, id_ikan, jumlah_pembelian, subtotal)
-                                                   VALUES (@transaksi, @ikan, @jumlah, @subtotal)";
+                            // A. Insert Detail
+                            string queryDetail = @"
+                            INSERT INTO detail_transaksi (id_transaksi, id_ikan, jumlah_pembelian, subtotal)
+                            VALUES (@idTrans, @idIkan, @qty, @subtotal)";
 
-                            using (var cmd = new NpgsqlCommand(queryDetail, conn))
+                            using (var cmdDetail = new NpgsqlCommand(queryDetail, conn, trans))
                             {
-                                cmd.Parameters.AddWithValue("@transaksi", transaksiId);
-                                cmd.Parameters.AddWithValue("@ikan", item.Ikan.IdIkan);
-                                cmd.Parameters.AddWithValue("@jumlah", item.Quantity);
-                                cmd.Parameters.AddWithValue("@subtotal", item.Subtotal);
-                                cmd.ExecuteNonQuery();
+                                cmdDetail.Parameters.AddWithValue("@idTrans", idTransaksiBaru);
+                                cmdDetail.Parameters.AddWithValue("@idIkan", item.Ikan.IdIkan);
+                                cmdDetail.Parameters.AddWithValue("@qty", item.Quantity);
+                                cmdDetail.Parameters.AddWithValue("@subtotal", item.Subtotal);
+
+                                cmdDetail.ExecuteNonQuery();
                             }
 
-                            // 3. Update stok ikan
-                            string updateStok = "UPDATE ikan SET stok = stok - @jumlah WHERE id_ikan = @ikan";
+                            // B. Update Stok Ikan (Kurangi Stok)
+                            string queryStok = "UPDATE ikan SET stok = stok - @qty WHERE id_ikan = @idIkan";
 
-                            using (var cmd = new NpgsqlCommand(updateStok, conn))
+                            using (var cmdStok = new NpgsqlCommand(queryStok, conn, trans))
                             {
-                                cmd.Parameters.AddWithValue("@jumlah", item.Quantity);
-                                cmd.Parameters.AddWithValue("@ikan", item.Ikan.IdIkan);
-                                cmd.ExecuteNonQuery();
+                                cmdStok.Parameters.AddWithValue("@qty", item.Quantity);
+                                cmdStok.Parameters.AddWithValue("@idIkan", item.Ikan.IdIkan);
+                                cmdStok.ExecuteNonQuery();
                             }
                         }
 
-                        transaction.Commit();
-                        CartSession.Clear();
+                        // Kalau semua lancar, simpan permanen
+                        trans.Commit();
+                        return true;
                     }
-                    catch
+                    catch (Exception ex)
                     {
-                        transaction.Rollback();
-                        throw;
+                        // Kalau ada error, batalkan semua perubahan
+                        trans.Rollback();
+                        System.Windows.Forms.MessageBox.Show("Error Transaksi: " + ex.Message);
+                        return false;
                     }
                 }
             }
-
-            return transaksiId;
         }
     }
 }

@@ -133,6 +133,7 @@
             Controls.Add(TBEmailLogin);
             DoubleBuffered = true;
             Name = "V_Login";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "V_Login";
             Load += V_Login_Load;
             ResumeLayout(false);

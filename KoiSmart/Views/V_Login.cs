@@ -2,7 +2,6 @@
 using KoiSmart.Helpers;
 using KoiSmart.Models;
 using System;
-using System.IO;
 using System.Windows.Forms;
 
 namespace KoiSmart.Views
@@ -37,7 +36,7 @@ namespace KoiSmart.Views
             // Validasi input
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
             {
-                MessageBox.Show("Email dan password harus diisi!");
+                MessageBox.Show("Email dan password harus diisi!", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -49,9 +48,9 @@ namespace KoiSmart.Views
                 // Simpan ke session
                 AppSession.SetUser(akun);
 
-                MessageBox.Show("Login berhasil!");
+                MessageBox.Show($"Login berhasil! Selamat datang, {akun.NamaDepan}.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                // NAVIGATION berdasarkan ROLE
+                // --- NAVIGATION BERDASARKAN ROLE ---
                 if (akun.Role == AkunRole.admin)
                 {
                     // Buka halaman admin
@@ -60,18 +59,19 @@ namespace KoiSmart.Views
                 }
                 else if (akun.Role == AkunRole.customer)
                 {
-                    // Buka halaman customer (jika sudah ada)
-                    // V_HalUtamaCustomer customerForm = new V_HalUtamaCustomer();
-                    // customerForm.Show();
-                    MessageBox.Show("Halaman customer belum dibuat");
+                    // --- SUDAH DIPERBAIKI DISINI ---
+                    // Buka halaman customer
+                    V_HalUtamaCust customerForm = new V_HalUtamaCust();
+                    customerForm.Show();
                 }
 
-                // Tutup login form
-                this.Close();
+                // PENTING: Gunakan Hide() jangan Close()
+                // Kalau Close(), aplikasi seringkali langsung berhenti total (Exit)
+                this.Hide();
             }
             else
             {
-                MessageBox.Show("Email atau password salah!");
+                MessageBox.Show("Email atau password salah!", "Login Gagal", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 TBPwLogin.Clear();
             }
         }

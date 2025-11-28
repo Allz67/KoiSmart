@@ -270,6 +270,7 @@
             DoubleBuffered = true;
             Margin = new Padding(2);
             Name = "V_FormDataIkan";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "V_FormDataIkan";
             ((System.ComponentModel.ISupportInitialize)PBUploadIkan).EndInit();
             ResumeLayout(false);

@@ -228,6 +228,7 @@
             Controls.Add(TBNamaBelakang);
             Controls.Add(TBNamaDepan);
             Name = "V_Register";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "V_Registrasi";
             Load += V_Register_Load;
             ResumeLayout(false);

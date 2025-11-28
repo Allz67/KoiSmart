@@ -66,6 +66,7 @@
             Controls.Add(BttnRegister);
             DoubleBuffered = true;
             Name = "V_Auth";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "V_Auth";
             Load += V_Auth_Load;
             ResumeLayout(false);

@@ -53,7 +53,7 @@
             // BtnTransaksiPenjualan
             // 
             BtnTransaksiPenjualan.BackgroundImage = Properties.Resources.Btn_Transaksi_Penjualan_Adm_Hal_Utama_1;
-            BtnTransaksiPenjualan.Location = new Point(44, 314);
+            BtnTransaksiPenjualan.Location = new Point(44, 313);
             BtnTransaksiPenjualan.Margin = new Padding(2);
             BtnTransaksiPenjualan.Name = "BtnTransaksiPenjualan";
             BtnTransaksiPenjualan.Size = new Size(228, 40);
@@ -97,7 +97,7 @@
             // BtnLogout
             // 
             BtnLogout.BackgroundImage = Properties.Resources.Btn_Logout_Adm_Hal_Utama_1;
-            BtnLogout.Location = new Point(73, 626);
+            BtnLogout.Location = new Point(70, 626);
             BtnLogout.Margin = new Padding(2);
             BtnLogout.Name = "BtnLogout";
             BtnLogout.Size = new Size(223, 57);
@@ -131,10 +131,10 @@
             BttnRefresh.BackColor = Color.MidnightBlue;
             BttnRefresh.BackgroundImage = Properties.Resources.refresh1;
             BttnRefresh.BackgroundImageLayout = ImageLayout.Zoom;
-            BttnRefresh.Location = new Point(1299, 21);
+            BttnRefresh.Location = new Point(1300, 25);
             BttnRefresh.Margin = new Padding(2);
             BttnRefresh.Name = "BttnRefresh";
-            BttnRefresh.Size = new Size(61, 52);
+            BttnRefresh.Size = new Size(47, 40);
             BttnRefresh.TabIndex = 8;
             BttnRefresh.UseVisualStyleBackColor = false;
             BttnRefresh.Click += BttnRefresh_Click;
@@ -146,6 +146,7 @@
             BackgroundImage = Properties.Resources.HalUtama_Adm1;
             BackgroundImageLayout = ImageLayout.Stretch;
             ClientSize = new Size(1399, 731);
+            Controls.Add(BtnTransaksiPenjualan);
             Controls.Add(FlpHalUtama);
             Controls.Add(BttnRefresh);
             Controls.Add(BtnTambahIkan);
@@ -153,7 +154,6 @@
             Controls.Add(BtnReviewCust);
             Controls.Add(BtnLaporanTransaksi);
             Controls.Add(BtnRiwayatTransaksi);
-            Controls.Add(BtnTransaksiPenjualan);
             Controls.Add(BtnHalUtama);
             DoubleBuffered = true;
             Margin = new Padding(2);

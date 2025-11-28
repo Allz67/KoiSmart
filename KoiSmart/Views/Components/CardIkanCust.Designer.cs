@@ -1,6 +1,6 @@
 ﻿namespace KoiSmart.Views.Components
 {
-    partial class CardIkan
+    partial class CardIkanCust
     {
         /// <summary> 
         /// Required designer variable.
@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             PanelCardIkan = new Panel();
-            BttnCardLihat = new Button();
-            LbStok = new Label();
-            LbCardHargaIkan = new Label();
-            LbCardNamaIkan = new Label();
             PBCardIkan = new PictureBox();
+            BttnCardLihat = new Button();
+            LbCardHargaIkan = new Label();
+            LbStok = new Label();
+            LbCardNamaIkan = new Label();
             PanelCardIkan.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)PBCardIkan).BeginInit();
             SuspendLayout();
@@ -42,15 +42,24 @@
             // 
             PanelCardIkan.BackgroundImage = Properties.Resources.kotak_ikan;
             PanelCardIkan.BackgroundImageLayout = ImageLayout.Zoom;
-            PanelCardIkan.Controls.Add(BttnCardLihat);
             PanelCardIkan.Controls.Add(PBCardIkan);
-            PanelCardIkan.Controls.Add(LbStok);
+            PanelCardIkan.Controls.Add(BttnCardLihat);
             PanelCardIkan.Controls.Add(LbCardHargaIkan);
+            PanelCardIkan.Controls.Add(LbStok);
             PanelCardIkan.Controls.Add(LbCardNamaIkan);
-            PanelCardIkan.Location = new Point(3, 9);
+            PanelCardIkan.Location = new Point(8, 10);
             PanelCardIkan.Name = "PanelCardIkan";
             PanelCardIkan.Size = new Size(295, 285);
-            PanelCardIkan.TabIndex = 0;
+            PanelCardIkan.TabIndex = 1;
+            // 
+            // PBCardIkan
+            // 
+            PBCardIkan.BackgroundImageLayout = ImageLayout.Zoom;
+            PBCardIkan.Location = new Point(24, 16);
+            PBCardIkan.Name = "PBCardIkan";
+            PBCardIkan.Size = new Size(245, 141);
+            PBCardIkan.TabIndex = 0;
+            PBCardIkan.TabStop = false;
             // 
             // BttnCardLihat
             // 
@@ -66,16 +75,6 @@
             BttnCardLihat.UseVisualStyleBackColor = false;
             BttnCardLihat.Click += BttnCardLihat_Click;
             // 
-            // LbStok
-            // 
-            LbStok.AutoSize = true;
-            LbStok.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            LbStok.Location = new Point(27, 205);
-            LbStok.Name = "LbStok";
-            LbStok.Size = new Size(45, 20);
-            LbStok.TabIndex = 3;
-            LbStok.Text = "Stok :";
-            // 
             // LbCardHargaIkan
             // 
             LbCardHargaIkan.AutoSize = true;
@@ -85,6 +84,16 @@
             LbCardHargaIkan.Size = new Size(111, 28);
             LbCardHargaIkan.TabIndex = 2;
             LbCardHargaIkan.Text = "Harga Ikan";
+            // 
+            // LbStok
+            // 
+            LbStok.AutoSize = true;
+            LbStok.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            LbStok.Location = new Point(27, 205);
+            LbStok.Name = "LbStok";
+            LbStok.Size = new Size(45, 20);
+            LbStok.TabIndex = 3;
+            LbStok.Text = "Stok :";
             // 
             // LbCardNamaIkan
             // 
@@ -96,22 +105,12 @@
             LbCardNamaIkan.TabIndex = 1;
             LbCardNamaIkan.Text = "Nama Ikan";
             // 
-            // PBCardIkan
-            // 
-            PBCardIkan.BackgroundImageLayout = ImageLayout.Zoom;
-            PBCardIkan.Location = new Point(24, 16);
-            PBCardIkan.Name = "PBCardIkan";
-            PBCardIkan.Size = new Size(245, 141);
-            PBCardIkan.TabIndex = 0;
-            PBCardIkan.TabStop = false;
-            // 
-            // CardIkan
+            // CardIkanCust
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.White;
             Controls.Add(PanelCardIkan);
-            Name = "CardIkan";
+            Name = "CardIkanCust";
             Size = new Size(311, 305);
             PanelCardIkan.ResumeLayout(false);
             PanelCardIkan.PerformLayout();
@@ -123,9 +122,9 @@
 
         private Panel PanelCardIkan;
         private Button BttnCardLihat;
+        private PictureBox PBCardIkan;
         private Label LbStok;
         private Label LbCardHargaIkan;
         private Label LbCardNamaIkan;
-        private PictureBox PBCardIkan;
     }
 }
