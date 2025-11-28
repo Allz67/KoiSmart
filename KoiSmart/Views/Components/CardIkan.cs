@@ -3,6 +3,8 @@ using System.Drawing;
 using System.IO; // WAJIB ADA: Buat ngurus Gambar
 using System.Windows.Forms;
 using KoiSmart.Models; // WAJIB ADA: Biar kenal sama class 'Ikan'
+using KoiSmart.Controllers;
+using KoiSmart.Views.Components;
 
 namespace KoiSmart.Views.Components
 {
@@ -58,8 +60,43 @@ namespace KoiSmart.Views.Components
         // --- EVENT TOMBOL LIHAT ---
         private void BttnCardLihat_Click(object sender, EventArgs e)
         {
-            // Nanti di sini kita ganti kode buat buka Form Detail
-            MessageBox.Show("Kamu memilih Ikan ID: " + _idIkan);
+            try
+            {
+                var controller = new IkanController();
+                var ikan = controller.GetById(_idIkan);
+                if (ikan == null)
+                {
+                    MessageBox.Show("Data ikan tidak ditemukan.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                // Buka popup sederhana yang menampung DetailDataIkan (preserve Designer sizes)
+                using var popup = new Form();
+                popup.StartPosition = FormStartPosition.CenterParent;
+                popup.FormBorderStyle = FormBorderStyle.FixedDialog;
+                popup.ShowInTaskbar = false;
+                popup.MinimizeBox = false;
+                popup.MaximizeBox = false;
+                popup.ClientSize = new Size(1260, 772); // sesuaikan dengan ukuran DetailDataIkan.Designer
+                popup.Text = "Detail Ikan";
+
+                var detail = new DetailDataIkan
+                {
+                    Dock = DockStyle.Fill
+                };
+
+                // Isi data ke kontrol detail
+                detail.SetData(ikan);
+
+                popup.Controls.Add(detail);
+
+                // Tampilkan modal
+                popup.ShowDialog(this);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Gagal membuka detail ikan: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

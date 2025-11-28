@@ -4,6 +4,8 @@ using KoiSmart.Models;
 using Npgsql;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Windows.Forms;
 
 namespace KoiSmart.Controllers
 {
@@ -47,7 +49,9 @@ namespace KoiSmart.Controllers
             }
             catch (Exception ex)
             {
-                // Kalau mau debugging, bisa Console.WriteLine(ex.Message);
+                // Log and show real error to help debugging
+                Debug.WriteLine("TambahIkan error: " + ex);
+                MessageBox.Show("Gagal menyimpan ke database. Error: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false; // Gagal
             }
         }
@@ -81,8 +85,10 @@ namespace KoiSmart.Controllers
                 }
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.WriteLine("UpdateIkan error: " + ex);
+                MessageBox.Show("Gagal mengupdate ke database. Error: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
         }
@@ -104,8 +110,10 @@ namespace KoiSmart.Controllers
                 }
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.WriteLine("DeleteIkan error: " + ex);
+                MessageBox.Show("Gagal menghapus dari database. Error: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
         }
@@ -129,8 +137,7 @@ namespace KoiSmart.Controllers
                         {
                             list.Add(new Ikan
                             {
-                                // Pastikan urutan index ini (0,1,2..) SESUAI dengan urutan kolom di Tabel PostgreSQL kamu
-                                IdIkan = Convert.ToInt32(reader["id_ikan"]), // Lebih aman pake nama kolom
+                                IdIkan = Convert.ToInt32(reader["id_ikan"]), 
                                 panjang = Convert.ToInt32(reader["panjang"]),
                                 gambar_ikan = reader["gambar_ikan"] == DBNull.Value ? null : (byte[])reader["gambar_ikan"],
                                 jenis_ikan = reader["jenis_ikan"].ToString(),
@@ -145,8 +152,7 @@ namespace KoiSmart.Controllers
             }
             catch (Exception ex)
             {
-                // Handle error koneksi dll
-                // Console.WriteLine(ex.Message);
+                Debug.WriteLine("AmbilSemuaIkan error: " + ex);
             }
 
             return list;

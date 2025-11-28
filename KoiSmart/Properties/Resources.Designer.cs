@@ -63,9 +63,39 @@ namespace KoiSmart.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap balik {
+            get {
+                object obj = ResourceManager.GetObject("balik", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Btn_Edit_Adm_Hal_Utama_3 {
+            get {
+                object obj = ResourceManager.GetObject("Btn_Edit_Adm_Hal Utama 3", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Btn_Halaman_Utama_Adm_Hal_Utama_1 {
             get {
                 object obj = ResourceManager.GetObject("Btn_Halaman Utama_Adm_Hal Utama 1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Btn_Hapus_Adm_Hal_Utama_3 {
+            get {
+                object obj = ResourceManager.GetObject("Btn_Hapus_Adm_Hal Utama 3", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -133,9 +163,39 @@ namespace KoiSmart.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap form_edit_ikan {
+            get {
+                object obj = ResourceManager.GetObject("form edit ikan", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap form_edit_ikan1 {
+            get {
+                object obj = ResourceManager.GetObject("form edit ikan1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap FormTambahDataIkan_Adm {
             get {
                 object obj = ResourceManager.GetObject("FormTambahDataIkan_Adm", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap frame_foto_detail_ikan {
+            get {
+                object obj = ResourceManager.GetObject("frame foto detail ikan", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -196,6 +256,36 @@ namespace KoiSmart.Properties {
         internal static System.Drawing.Bitmap refresh1 {
             get {
                 object obj = ResourceManager.GetObject("refresh1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap show_hal_detail_ikan {
+            get {
+                object obj = ResourceManager.GetObject("show hal detail ikan", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap show_hal_detail_ikan1 {
+            get {
+                object obj = ResourceManager.GetObject("show hal detail ikan1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap show_hal_detail_ikan2 {
+            get {
+                object obj = ResourceManager.GetObject("show hal detail ikan2", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
