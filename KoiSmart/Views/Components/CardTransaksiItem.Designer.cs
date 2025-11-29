@@ -68,6 +68,7 @@
             // 
             // LblHargaSatuan
             // 
+            LblHargaSatuan.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             LblHargaSatuan.AutoSize = true;
             LblHargaSatuan.Font = new Font("Segoe UI Semibold", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
             LblHargaSatuan.ForeColor = Color.Black;
@@ -91,11 +92,11 @@
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.White;
+            Controls.Add(PbGambar);
             Controls.Add(panel1);
             Controls.Add(LblHargaSatuan);
             Controls.Add(LblQty);
             Controls.Add(LblNama);
-            Controls.Add(PbGambar);
             Name = "CardTransaksiItem";
             Size = new Size(920, 100);
             ((System.ComponentModel.ISupportInitialize)PbGambar).EndInit();

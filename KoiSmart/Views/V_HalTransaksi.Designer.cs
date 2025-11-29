@@ -109,7 +109,9 @@
             // 
             // FlpContent
             // 
+            FlpContent.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             FlpContent.AutoScroll = true;
+            FlpContent.FlowDirection = FlowDirection.TopDown;
             FlpContent.Location = new Point(376, 98);
             FlpContent.Name = "FlpContent";
             FlpContent.Size = new Size(980, 606);

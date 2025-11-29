@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using KoiSmart.Controllers;       // Akses TransaksiController, AuthController
+using KoiSmart.Controllers;       // Akses TransaksiController
 using KoiSmart.Helpers;           // Akses AppSession, CartSession
 using KoiSmart.Models;            // Akses RiwayatTransaksi, Akun
 using KoiSmart.Views.Components;  // Akses CardTransaksi
@@ -15,48 +15,41 @@ namespace KoiSmart.Views
         private TransaksiController _controller;
         private AuthController _auth;
 
-        // File: V_HalTransaksi.cs
-
         public V_HalTransaksi()
         {
             InitializeComponent();
             _controller = new TransaksiController();
             _auth = new AuthController();
-
-            // --- PERBAIKAN 1: Panggil di Constructor ---
-            LoadUserInfo();
-        }
-
-        // Tambahkan Method ini (Jika belum ada, atau pastikan sudah ada)
-        private void LoadUserInfo()
-        {
-            if (AppSession.IsAuthenticated && AppSession.CurrentUser != null)
-            {
-                // ASUMSI LblUsername ada di designer
-                LblUsername.Text = "Halo, " + AppSession.CurrentUser.Username;
-            }
+            LoadUserInfo(); // Memuat info user saat form dibuat
         }
 
         private void V_HalTransaksi_Load(object sender, EventArgs e)
         {
-            // --- PERBAIKAN 2: Hanya LoadRiwayatTransaksi di sini ---
             LoadRiwayatTransaksi();
         }
 
-        // --- METHOD TAMBAHAN: LOAD USER INFO ---
+        // --- METHOD TAMBAHAN: LOAD USER INFO (Fix agar username muncul) ---
+        private void LoadUserInfo()
+        {
+            if (AppSession.IsAuthenticated && AppSession.CurrentUser != null)
+            {
+                // LblUsername adalah label di sidebar yang menampilkan nama user
+                // Asumsi nama label di sidebar bernama LblUsername
+                LblUsername.Text = AppSession.CurrentUser.NamaDepan + " " + AppSession.CurrentUser.NamaBelakang;
+            }
+        }
 
         // --- METHOD UTAMA: LOAD DAN DISPLAY DATA BERJENJANG ---
+        // File: V_HalTransaksi.cs
+
         private void LoadRiwayatTransaksi()
         {
-            // Asumsi FLP tempat kartu utama bernama FlpContent
-            FlpContent.Controls.Clear();
-
-            // Cek apakah user sudah login. Jika tidak, tidak bisa ambil riwayat.
             if (!AppSession.IsAuthenticated) return;
+
+            FlpContent.Controls.Clear();
 
             int idUser = AppSession.CurrentUser.IdAkun;
 
-            // Tarik Data dari Database (Sudah di-join dan di-grup di Controller)
             List<RiwayatTransaksi> listTrx = _controller.GetRiwayat(idUser);
 
             if (listTrx == null || listTrx.Count == 0)
@@ -77,22 +70,20 @@ namespace KoiSmart.Views
                 CardTransaksi card = new CardTransaksi();
                 card.SetData(trx);
 
-                // --- EVENT: KLIK KARTU HARUS BUKA DETAIL RESMI ---
+                // Event Klik Kartu
                 card.OnViewDetails += (s, e) =>
                 {
                     OpenDetailReceipt(card.DataTrx);
                 };
 
                 // Atur lebar card agar pas (asumsi lebar container 980px)
-                card.Width = FlpContent.Width - 30; // Disesuaikan dengan lebar FLP
+                card.Width = FlpContent.Width - 30;
                 FlpContent.Controls.Add(card);
             }
         }
 
-        // --- LOGIC: MEMBUKA DETAIL RECEIPT ---
         private void OpenDetailReceipt(RiwayatTransaksi trx)
         {
-            // Untuk sementara, kita tampilkan detail statusnya aja
             MessageBox.Show($"Detail Transaksi #{trx.IdTransaksi}\nStatus: {trx.Status}\nTotal: Rp {trx.TotalBelanja:N0}",
                             "Detail Pesanan", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
@@ -103,15 +94,13 @@ namespace KoiSmart.Views
 
         private void BttnHalUtama_Click(object sender, EventArgs e)
         {
-            // Buka halaman utama customer
             V_HalUtamaCust homeForm = new V_HalUtamaCust();
             homeForm.Show();
-            this.Close(); // Tutup form riwayat transaksi
+            this.Close();
         }
 
         private void BttnRefresh_Click(object sender, EventArgs e)
         {
-            // Refresh data di halaman ini
             LoadRiwayatTransaksi();
         }
 
@@ -123,15 +112,15 @@ namespace KoiSmart.Views
             if (result == DialogResult.Yes)
             {
                 _auth.Logout();
-                CartSession.Clear(); // Bersihkan keranjang
+                CartSession.Clear();
                 new V_Login().Show();
                 this.Close();
             }
         }
 
         // Tombol yang tidak perlu implementasi logic di sini
-        private void BttnTransaksiPembelian_Click(object sender, EventArgs e) { /* Already here */ }
-        private void BttnRiwayatTransaksi_Click(object sender, EventArgs e) { /* Already here */ }
+        private void BttnTransaksiPembelian_Click(object sender, EventArgs e) { }
+        private void BttnRiwayatTransaksi_Click(object sender, EventArgs e) { }
         private void BttnReview_Click(object sender, EventArgs e) { /* Placeholder */ }
     }
 }

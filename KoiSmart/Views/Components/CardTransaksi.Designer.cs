@@ -83,6 +83,7 @@
             // 
             // FlpBarang
             // 
+            FlpBarang.AutoScroll = true;
             FlpBarang.AutoSize = true;
             FlpBarang.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             FlpBarang.Dock = DockStyle.Top;
@@ -125,7 +126,7 @@
             Controls.Add(PnlHeader);
             Name = "CardTransaksi";
             Padding = new Padding(5);
-            Size = new Size(940, 200);
+            Size = new Size(940, 239);
             PnlHeader.ResumeLayout(false);
             PnlHeader.PerformLayout();
             PnlFooter.ResumeLayout(false);

@@ -3,8 +3,8 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using KoiSmart.Controllers;        // Akses TransaksiController
-using KoiSmart.Helpers;            // Akses CartSession & AppSession
-using KoiSmart.Models;             // Akses Model
+using KoiSmart.Helpers;            // Akses CartSession & AppSession, ImageHelper
+using KoiSmart.Models;             // Akses Model Data
 using KoiSmart.Views.Components;   // Akses CardCheckoutItem
 
 namespace KoiSmart.Views
@@ -18,34 +18,32 @@ namespace KoiSmart.Views
         public V_DetailPesanan()
         {
             InitializeComponent();
-
             _transaksiController = new TransaksiController();
 
-            // Setting Form
+            // Setting Form agar tampil sebagai Dialog Modal
             this.StartPosition = FormStartPosition.CenterParent;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
 
-            // --- JURUS PAKSA MUAT DATA (Di Constructor) ---
+            // --- TEMBAK LANGSUNG MUAT DATA ---
+            // Memastikan data dimuat segera tanpa menunggu event Load
             LoadDataKeranjang();
         }
 
         private void V_DetailPesanan_Load(object sender, EventArgs e)
         {
-            // Event Load Form ini Boleh Kosong karena Logic pemuatan data sudah di Constructor.
+            // Method ini boleh kosong karena logic pemuatan data sudah dipindah ke Constructor.
         }
 
         // --- 1. LOAD DATA DARI KERANJANG ---
         private void LoadDataKeranjang()
         {
+            // FlpItems adalah FlowLayoutPanel utama untuk list barang
             FlpItems.Controls.Clear();
 
             // Pastikan kita dapat data dari CartSession
             if (CartSession.Items == null || CartSession.Items.Count == 0)
             {
-                // Tampilkan pesan kosong jika keranjang kosong
-                // (Ini penting jika user somehow bisa masuk ke form ini tanpa belanja)
-                // Label pesan kosong opsional
                 LblTotalBayar.Text = "Rp 0";
                 BtnBuatPesanan.Enabled = false;
                 return;
@@ -53,6 +51,7 @@ namespace KoiSmart.Views
 
             foreach (var item in CartSession.Items)
             {
+                // Panggil CardCheckoutItem untuk menampilkan per baris
                 CardCheckoutItem card = new CardCheckoutItem();
                 card.SetData(item);
                 FlpItems.Controls.Add(card);
@@ -60,7 +59,7 @@ namespace KoiSmart.Views
 
             // Tampilkan Total Harga
             LblTotalBayar.Text = "Rp " + CartSession.GetTotal().ToString("N0");
-            BtnBuatPesanan.Enabled = true; // Aktifkan tombol
+            BtnBuatPesanan.Enabled = true;
         }
 
         // --- 2. TOMBOL UPLOAD BUKTI ---
@@ -71,17 +70,16 @@ namespace KoiSmart.Views
 
             if (opf.ShowDialog() == DialogResult.OK)
             {
-                // 1. Tampilkan di Layar
-                // Gunakan using statement agar MemoryStream ditutup
                 using (var stream = new FileStream(opf.FileName, FileMode.Open, FileAccess.Read))
                 {
-                    // Membuat salinan gambar agar file tidak terkunci oleh aplikasi
+                    // Membuat salinan gambar agar file tidak terkunci
                     Image uploadedImage = Image.FromStream(stream);
 
+                    // 1. Tampilkan Preview
                     PbBuktiBayar.Image = uploadedImage;
                     PbBuktiBayar.SizeMode = PictureBoxSizeMode.Zoom;
 
-                    // 2. Simpan ke Variabel Byte[] (Pake Helper)
+                    // 2. Simpan ke Variabel Byte[] menggunakan ImageHelper
                     _buktiBayarBytes = ImageHelper.ImageToBinary(uploadedImage);
                 }
             }
@@ -98,7 +96,7 @@ namespace KoiSmart.Views
                 return;
             }
 
-            // B. Validasi: Cek ulang Cart tidak kosong (double protection)
+            // B. Validasi: Cek ulang Cart tidak kosong
             if (CartSession.Items.Count == 0)
             {
                 MessageBox.Show("Keranjang belanja kosong. Silakan kembali ke katalog.", "Error");
@@ -106,13 +104,14 @@ namespace KoiSmart.Views
                 return;
             }
 
-            // C. PROSES SIMPAN KE DATABASE
+            // C. PROSES SIMPAN KE DATABASE (Memanggil Controller)
             int idUser = AppSession.CurrentUser.IdAkun;
 
+            // FIX: Panggil method BuatPesanan dengan eksplisit naming
             bool sukses = _transaksiController.BuatPesanan(
-                idUser,
-                _buktiBayarBytes,
-                CartSession.Items
+                idAkun: idUser,
+                buktiPembayaran: _buktiBayarBytes,
+                items: CartSession.Items
             );
 
             if (sukses)
