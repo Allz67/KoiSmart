@@ -29,37 +29,25 @@
         private void InitializeComponent()
         {
             PnlHeader = new Panel();
-            LblStatus = new Label();
             LblTanggal = new Label();
+            LblTotal = new Label();
+            LblStatus = new Label();
             flowLayoutPanel1 = new FlowLayoutPanel();
             FlpBarang = new FlowLayoutPanel();
             PnlFooter = new Panel();
-            LblTotal = new Label();
             PnlHeader.SuspendLayout();
             PnlFooter.SuspendLayout();
             SuspendLayout();
             // 
             // PnlHeader
             // 
-            PnlHeader.Controls.Add(LblStatus);
             PnlHeader.Controls.Add(LblTanggal);
+            PnlHeader.Controls.Add(LblTotal);
             PnlHeader.Dock = DockStyle.Bottom;
-            PnlHeader.Location = new Point(5, 5);
+            PnlHeader.Location = new Point(5, 194);
             PnlHeader.Name = "PnlHeader";
             PnlHeader.Size = new Size(930, 40);
             PnlHeader.TabIndex = 0;
-            // 
-            // LblStatus
-            // 
-            LblStatus.AutoSize = true;
-            LblStatus.BackColor = Color.Transparent;
-            LblStatus.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            LblStatus.ForeColor = Color.MidnightBlue;
-            LblStatus.Location = new Point(797, 10);
-            LblStatus.Name = "LblStatus";
-            LblStatus.Size = new Size(116, 20);
-            LblStatus.TabIndex = 2;
-            LblStatus.Text = "Status Transaksi";
             // 
             // LblTanggal
             // 
@@ -71,6 +59,30 @@
             LblTanggal.Size = new Size(218, 20);
             LblTanggal.TabIndex = 1;
             LblTanggal.Text = "Id Transaksi | Tanggal transaksi";
+            // 
+            // LblTotal
+            // 
+            LblTotal.AutoSize = true;
+            LblTotal.BackColor = Color.Transparent;
+            LblTotal.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            LblTotal.ForeColor = Color.Black;
+            LblTotal.Location = new Point(796, 10);
+            LblTotal.Name = "LblTotal";
+            LblTotal.Size = new Size(88, 20);
+            LblTotal.TabIndex = 3;
+            LblTotal.Text = "Total Harga";
+            // 
+            // LblStatus
+            // 
+            LblStatus.AutoSize = true;
+            LblStatus.BackColor = Color.Transparent;
+            LblStatus.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            LblStatus.ForeColor = Color.MidnightBlue;
+            LblStatus.Location = new Point(804, 8);
+            LblStatus.Name = "LblStatus";
+            LblStatus.Size = new Size(116, 20);
+            LblStatus.TabIndex = 2;
+            LblStatus.Text = "Status Transaksi";
             // 
             // flowLayoutPanel1
             // 
@@ -88,31 +100,19 @@
             FlpBarang.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             FlpBarang.Dock = DockStyle.Fill;
             FlpBarang.FlowDirection = FlowDirection.TopDown;
-            FlpBarang.Location = new Point(5, 45);
+            FlpBarang.Location = new Point(5, 31);
             FlpBarang.Name = "FlpBarang";
-            FlpBarang.Size = new Size(930, 0);
+            FlpBarang.Size = new Size(930, 163);
             FlpBarang.TabIndex = 2;
             // 
             // PnlFooter
             // 
-            PnlFooter.Controls.Add(LblTotal);
+            PnlFooter.Controls.Add(LblStatus);
             PnlFooter.Dock = DockStyle.Top;
-            PnlFooter.Location = new Point(5, 45);
+            PnlFooter.Location = new Point(5, 5);
             PnlFooter.Name = "PnlFooter";
-            PnlFooter.Size = new Size(930, 39);
+            PnlFooter.Size = new Size(930, 26);
             PnlFooter.TabIndex = 3;
-            // 
-            // LblTotal
-            // 
-            LblTotal.AutoSize = true;
-            LblTotal.BackColor = Color.Transparent;
-            LblTotal.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            LblTotal.ForeColor = Color.Black;
-            LblTotal.Location = new Point(742, 10);
-            LblTotal.Name = "LblTotal";
-            LblTotal.Size = new Size(88, 20);
-            LblTotal.TabIndex = 3;
-            LblTotal.Text = "Total Harga";
             // 
             // CardTransaksi
             // 
@@ -120,10 +120,10 @@
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
             BackColor = Color.White;
-            Controls.Add(PnlFooter);
             Controls.Add(FlpBarang);
             Controls.Add(flowLayoutPanel1);
             Controls.Add(PnlHeader);
+            Controls.Add(PnlFooter);
             Name = "CardTransaksi";
             Padding = new Padding(5);
             Size = new Size(940, 239);
@@ -142,7 +142,7 @@
         private Label LblTanggal;
         private FlowLayoutPanel flowLayoutPanel1;
         private FlowLayoutPanel FlpBarang;
-        private Panel PnlFooter;
         private Label LblTotal;
+        private Panel PnlFooter;
     }
 }
