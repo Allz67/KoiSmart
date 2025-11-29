@@ -134,8 +134,8 @@ namespace KoiSmart.Controllers
 
             if (statusList != null && statusList.Count > 0)
             {
-                statusParamsSql = string.Join(",", statusList.Select((s, i) => $"@status{i}"));
-                statusFilterClause = $" AND t.status IN ({statusParamsSql})";
+                statusParamsSql = string.Join(",", statusList.Select((s, i) => $"@status_transaksi{i}"));
+                statusFilterClause = $" AND t.status_transaksi IN ({statusParamsSql})";
             }
 
             using (var conn = new NpgsqlConnection(_dbContext.connStr))
@@ -163,7 +163,7 @@ namespace KoiSmart.Controllers
                         {
                             for (int i = 0; i < statusList.Count; i++)
                             {
-                                cmd.Parameters.AddWithValue($"@status{i}", statusList[i]);
+                                cmd.Parameters.AddWithValue($"@status_transaksi{i}", statusList[i]);
                             }
                         }
 
@@ -181,7 +181,7 @@ namespace KoiSmart.Controllers
                                     {
                                         IdTransaksi = idTrx,
                                         Tanggal = reader.IsDBNull(reader.GetOrdinal("tanggal_transaksi")) ? DateTime.MinValue : reader.GetDateTime(reader.GetOrdinal("tanggal_transaksi")),
-                                        Status = reader["status"].ToString(),
+                                        Status = reader["status_transaksi"].ToString(),
                                         TotalBelanja = reader.IsDBNull(reader.GetOrdinal("total_harga")) ? 0m : Convert.ToDecimal(reader["total_harga"]),
                                         Items = new List<RiwayatItem>()
                                     };
