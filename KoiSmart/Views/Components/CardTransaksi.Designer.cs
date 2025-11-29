@@ -43,7 +43,7 @@
             // 
             PnlHeader.Controls.Add(LblStatus);
             PnlHeader.Controls.Add(LblTanggal);
-            PnlHeader.Dock = DockStyle.Top;
+            PnlHeader.Dock = DockStyle.Bottom;
             PnlHeader.Location = new Point(5, 5);
             PnlHeader.Name = "PnlHeader";
             PnlHeader.Size = new Size(930, 40);
@@ -86,7 +86,7 @@
             FlpBarang.AutoScroll = true;
             FlpBarang.AutoSize = true;
             FlpBarang.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            FlpBarang.Dock = DockStyle.Top;
+            FlpBarang.Dock = DockStyle.Fill;
             FlpBarang.FlowDirection = FlowDirection.TopDown;
             FlpBarang.Location = new Point(5, 45);
             FlpBarang.Name = "FlpBarang";

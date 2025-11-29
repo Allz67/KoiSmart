@@ -21,6 +21,7 @@ namespace KoiSmart.Views
             _controller = new TransaksiController();
             _auth = new AuthController();
             LoadUserInfo(); // Memuat info user saat form dibuat
+            LoadRiwayatTransaksi();
         }
 
         private void V_HalTransaksi_Load(object sender, EventArgs e)
