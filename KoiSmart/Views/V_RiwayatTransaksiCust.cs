@@ -109,7 +109,12 @@ namespace KoiSmart.Views
             LoadRiwayatTransaksi();
         }
 
-        private void BttnReview_Click(object sender, EventArgs e) { /* Placeholder */ }
+        private void BttnReview_Click(object sender, EventArgs e) 
+        {
+            V_ReviewCust reviewForm = new V_ReviewCust();
+            reviewForm.Show();
+            this.Close();
+        }
 
         private void BttnRefresh_Click(object sender, EventArgs e)
         {

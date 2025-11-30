@@ -21,6 +21,7 @@ namespace KoiSmart.Views
             _transController = new TransaksiController();
             LoadRiwayatTransaksi();
             LoadUserInfo();
+            _auth = new AuthController();
         }
         private void LoadUserInfo()
         {
@@ -104,7 +105,12 @@ namespace KoiSmart.Views
         }
 
         private void BtnReviewCust_Click(object sender, EventArgs e)
-        { /* Logic navigasi review */ }
+        {
+            V_ReviewAdm frm = new V_ReviewAdm();
+            frm.StartPosition = FormStartPosition.CenterScreen;
+            frm.Show();
+            this.Close();
+        }
 
         private void BtnLogout_Click(object sender, EventArgs e)
         {

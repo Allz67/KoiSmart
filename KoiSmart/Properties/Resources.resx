@@ -184,6 +184,9 @@
   <data name="button konfirmasi" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\button konfirmasi.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Btn_Review Pelanggan_Adm_Hal Utama 11" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Btn_Review Pelanggan_Adm_Hal Utama 11.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="refresh1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\refresh1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -199,8 +202,8 @@
   <data name="btn_transaksipembelian2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\btn_transaksipembelian2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="detail_ikan" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\detail_ikan.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="reviewadm" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\reviewadm.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="show hal detail ikan2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\show hal detail ikan2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -220,6 +223,9 @@
   <data name="HalUtama_cust" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\HalUtama_cust.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="detail_ikan" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\detail_ikan.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Btn_Riwayat Transaksi_Adm_Hal Utama 1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Btn_Riwayat Transaksi_Adm_Hal Utama 1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -235,11 +241,17 @@
   <data name="Btn_Riwayat Transaksi_Adm_Hal Utama 11" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Btn_Riwayat Transaksi_Adm_Hal Utama 11.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="reviewcust" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\reviewcust.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="btntransaksipembelianblue" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\btntransaksipembelianblue.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="btn_riwayat" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\btn_riwayat.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Btn_Laporan Transaksi_Adm_Hal Utama 11" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Btn_Laporan Transaksi_Adm_Hal Utama 11.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="form edit ikan" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\form edit ikan.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -271,7 +283,7 @@
   <data name="btnhalutamawhite1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\btnhalutamawhite1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Btn_Laporan Transaksi_Adm_Hal Utama 11" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Btn_Laporan Transaksi_Adm_Hal Utama 11.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="btn_review1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\btn_review1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

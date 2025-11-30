@@ -10,11 +10,13 @@ namespace KoiSmart.Views
         private TransaksiController _transController;
         private AuthController _auth;
 
+
         public V_HalTransaksiAdm()
         {
             InitializeComponent();
             _transController = new TransaksiController();
             LoadTransaksiPenjualan();
+            _auth = new AuthController();
         }
 
         private void LoadTransaksiPenjualan()
@@ -117,7 +119,10 @@ namespace KoiSmart.Views
 
         private void BtnReviewCust_Click(object sender, EventArgs e)
         {
-
+            V_ReviewAdm frm = new V_ReviewAdm();
+            frm.StartPosition = FormStartPosition.CenterScreen;
+            frm.Show();
+            this.Close();
         }
     }
 }

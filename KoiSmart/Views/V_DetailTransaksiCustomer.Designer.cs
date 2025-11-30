@@ -42,6 +42,7 @@
             LblStatus = new Label();
             BtnBukti = new Button();
             BtnBatalkanPesanan = new Button();
+            BtnReview = new Button();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
@@ -209,6 +210,20 @@
             BtnBatalkanPesanan.UseVisualStyleBackColor = false;
             BtnBatalkanPesanan.Click += BtnBatalkanPesanan_Click;
             // 
+            // BtnReview
+            // 
+            BtnReview.BackColor = Color.FromArgb(255, 128, 0);
+            BtnReview.FlatStyle = FlatStyle.Flat;
+            BtnReview.Font = new Font("Segoe UI Semibold", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            BtnReview.ForeColor = Color.Black;
+            BtnReview.Location = new Point(290, 648);
+            BtnReview.Name = "BtnReview";
+            BtnReview.Size = new Size(167, 46);
+            BtnReview.TabIndex = 53;
+            BtnReview.Text = "Buat Review";
+            BtnReview.UseVisualStyleBackColor = false;
+            BtnReview.Click += BtnReview_Click;
+            // 
             // V_DetailTransaksiCustomer
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -216,6 +231,7 @@
             BackgroundImage = Properties.Resources.background1;
             BackgroundImageLayout = ImageLayout.Stretch;
             ClientSize = new Size(1399, 731);
+            Controls.Add(BtnReview);
             Controls.Add(BtnBatalkanPesanan);
             Controls.Add(BtnBukti);
             Controls.Add(LblStatus);
@@ -251,5 +267,6 @@
         private Label LblStatus;
         private Button BtnBukti;
         private Button BtnBatalkanPesanan;
+        private Button BtnReview;
     }
 }

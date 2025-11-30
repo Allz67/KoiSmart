@@ -1,11 +1,12 @@
-﻿using System;
+﻿using KoiSmart.Controllers;
+using KoiSmart.Models;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using KoiSmart.Controllers;
-using KoiSmart.Models;
 
 namespace KoiSmart.Views
 {
@@ -14,13 +15,15 @@ namespace KoiSmart.Views
 
         private LaporanController _controller;
         private TransaksiController _transaksiController; 
-        private Dictionary<int, string> _bulanMap; 
+        private Dictionary<int, string> _bulanMap;
+        private AuthController _auth;
 
         public V_LaporanTransaksi()
         {
             InitializeComponent();
             _controller = new LaporanController();
-            _transaksiController = new TransaksiController(); 
+            _transaksiController = new TransaksiController();
+            _auth = new AuthController();
 
             InitializeBulanMap();
             LoadPeriodSelectors();
@@ -153,13 +156,24 @@ namespace KoiSmart.Views
 
         private void BtnReviewCust_Click(object sender, EventArgs e)
         {
+            V_ReviewAdm frm = new V_ReviewAdm();
+            frm.StartPosition = FormStartPosition.CenterScreen;
+            frm.Show();
+            this.Close();
         }
 
         private void BtnLogout_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Yakin ingin logout?", "Logout", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            if (_auth == null) return;
+
+            DialogResult result = MessageBox.Show("Yakin ingin logout?", "Konfirmasi Logout",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
             {
-                new V_Login().Show();
+                _auth.Logout();
+                V_Login loginForm = new V_Login();
+                loginForm.Show();
                 this.Close();
             }
         }

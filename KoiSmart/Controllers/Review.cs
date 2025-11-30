@@ -1,9 +1,6 @@
 ﻿using Npgsql;
 using KoiSmart.Database;
-using KoiSmart.Helpers;
 using KoiSmart.Models.Review;
-using System;
-using System.Collections.Generic;
 
 namespace KoiSmart.Controllers
 {
@@ -26,27 +23,25 @@ namespace KoiSmart.Controllers
                     try
                     {
                         string q1 = @"
-                            INSERT INTO review (isi_review, gambar)
-                            VALUES (@isi, @gambar)
+                            INSERT INTO review (isi_review, gambar, tanggal_review)
+                            VALUES (@isi, @gambar, @tanggal)
                             RETURNING id_review;
                         ";
 
                         int idReview;
-                        using (var cmd = new NpgsqlCommand(q1, conn))
+                        using (var cmd = new NpgsqlCommand(q1, conn, trx)) 
                         {
                             cmd.Parameters.AddWithValue("@isi", isi);
                             cmd.Parameters.AddWithValue("@gambar", (object)gambar ?? DBNull.Value);
-
+                            cmd.Parameters.AddWithValue("@tanggal", DateTime.Now);
                             idReview = Convert.ToInt32(cmd.ExecuteScalar());
                         }
-
                         string q2 = @"
                             UPDATE transaksi 
                             SET id_review = @id
-                            WHERE id_transaksi = @trans
-                        ";
+                            WHERE id_transaksi = @trans";
 
-                        using (var cmd = new NpgsqlCommand(q2, conn))
+                        using (var cmd = new NpgsqlCommand(q2, conn, trx)) 
                         {
                             cmd.Parameters.AddWithValue("@id", idReview);
                             cmd.Parameters.AddWithValue("@trans", idTransaksi);
@@ -56,8 +51,9 @@ namespace KoiSmart.Controllers
                         trx.Commit();
                         return true;
                     }
-                    catch
+                    catch (Exception ex)
                     {
+                        MessageBox.Show("Gagal menambahkan review: " + ex.Message, "Database Error");
                         trx.Rollback();
                         return false;
                     }
@@ -65,23 +61,102 @@ namespace KoiSmart.Controllers
             }
         }
 
-        public bool CanReview(int idTransaksi)
+        public bool DeleteReview(int idReview)
         {
             using (var conn = new NpgsqlConnection(_db.connStr))
             {
                 conn.Open();
-
-                string query = "SELECT id_review FROM transaksi WHERE id_transaksi = @id";
-
-                using (var cmd = new NpgsqlCommand(query, conn))
+                using (var trx = conn.BeginTransaction())
                 {
-                    cmd.Parameters.AddWithValue("@id", idTransaksi);
-                    var result = cmd.ExecuteScalar();
-                    return result == DBNull.Value || result == null;
+                    try
+                    {
+                        string q1 = "UPDATE transaksi SET id_review = NULL WHERE id_review = @id";
+                        using (var cmd = new NpgsqlCommand(q1, conn, trx))
+                        {
+                            cmd.Parameters.AddWithValue("@id", idReview);
+                            cmd.ExecuteNonQuery();
+                        }
+                        string q2 = "DELETE FROM review WHERE id_review = @id";
+                        using (var cmd = new NpgsqlCommand(q2, conn, trx))
+                        {
+                            cmd.Parameters.AddWithValue("@id", idReview);
+                            int rowsAffected = cmd.ExecuteNonQuery();
+                            trx.Commit();
+                            return rowsAffected > 0;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Windows.Forms.MessageBox.Show("Gagal menghapus review: " + ex.Message, "Database Error");
+                        trx.Rollback();
+                        return false;
+                    }
                 }
             }
         }
+        public int? GetReviewId(int idTransaksi)
+        {
+            using (var conn = new NpgsqlConnection(_db.connStr))
+            {
+                try
+                {
+                    conn.Open();
+                    string query = "SELECT id_review FROM transaksi WHERE id_transaksi = @id";
+                    using (var cmd = new NpgsqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@id", idTransaksi);
+                        var result = cmd.ExecuteScalar();
 
+                        return result == DBNull.Value || result == null ? (int?)null : Convert.ToInt32(result);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.Forms.MessageBox.Show("Error saat mendapatkan ID Review: " + ex.Message, "Database Error");
+                    return null;
+                }
+            }
+        }
+        public ReviewData GetReviewById(int idReview)
+        {
+            using (var conn = new NpgsqlConnection(_db.connStr))
+            {
+                conn.Open();
+                string query = @"
+                    SELECT r.id_review,
+                           a.username AS nama_pembeli, 
+                           r.isi_review,
+                           r.gambar,
+                           r.tanggal_review, -- Kolom tanggal review
+                           t.id_transaksi
+                    FROM review r
+                    JOIN transaksi t ON t.id_review = r.id_review
+                    JOIN akun a ON a.id_akun = t.id_akun
+                    WHERE r.id_review = @id";
+
+                using (var cmd = new NpgsqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@id", idReview);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            return new ReviewData
+                            {
+                                IdReview = reader.GetInt32(0),
+                                NamaPembeli = reader.GetString(1),
+                                IsiReview = reader.GetString(2),
+                                Gambar = reader["gambar"] as byte[],
+                                TanggalReview = reader.GetDateTime(4), 
+                                IdTransaksi = reader.GetInt32(5)
+                            };
+                        }
+                        return null;
+                    }
+                }
+            }
+        }
         public List<ReviewData> GetAllReview()
         {
             var list = new List<ReviewData>();
@@ -89,18 +164,18 @@ namespace KoiSmart.Controllers
             using (var conn = new NpgsqlConnection(_db.connStr))
             {
                 conn.Open();
-
                 string query = @"
                     SELECT 
                         r.id_review,
-                        a.nama_depan || ' ' || a.nama_belakang AS nama,
+                        a.username AS nama_pembeli,
                         r.isi_review,
                         r.gambar,
+                        r.tanggal_review, -- Kolom tanggal review
                         t.id_transaksi
                     FROM review r
                     JOIN transaksi t ON t.id_review = r.id_review
                     JOIN akun a ON a.id_akun = t.id_akun
-                    ORDER BY r.id_review DESC
+                    ORDER BY r.tanggal_review DESC
                 ";
 
                 using (var cmd = new NpgsqlCommand(query, conn))
@@ -114,12 +189,12 @@ namespace KoiSmart.Controllers
                             NamaPembeli = reader.GetString(1),
                             IsiReview = reader.GetString(2),
                             Gambar = reader["gambar"] as byte[],
-                            IdTransaksi = reader.GetInt32(4)
+                            TanggalReview = reader.GetDateTime(4), 
+                            IdTransaksi = reader.GetInt32(5)
                         });
                     }
                 }
             }
-
             return list;
         }
     }

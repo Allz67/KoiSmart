@@ -183,6 +183,26 @@ namespace KoiSmart.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Btn_Review_Pelanggan_Adm_Hal_Utama_11 {
+            get {
+                object obj = ResourceManager.GetObject("Btn_Review Pelanggan_Adm_Hal Utama 11", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap btn_review1 {
+            get {
+                object obj = ResourceManager.GetObject("btn_review1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap btn_riwayat {
             get {
                 object obj = ResourceManager.GetObject("btn_riwayat", resourceCulture);
@@ -516,6 +536,26 @@ namespace KoiSmart.Properties {
         internal static System.Drawing.Bitmap refresh1 {
             get {
                 object obj = ResourceManager.GetObject("refresh1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap reviewadm {
+            get {
+                object obj = ResourceManager.GetObject("reviewadm", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap reviewcust {
+            get {
+                object obj = ResourceManager.GetObject("reviewcust", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -95,7 +95,13 @@ namespace KoiSmart.Views
             this.Close();
         }
 
-        private void BtnReviewCust_Click(object sender, EventArgs e) { }
+        private void BtnReviewCust_Click(object sender, EventArgs e) 
+        {
+            V_ReviewAdm frm = new V_ReviewAdm();
+            frm.StartPosition = FormStartPosition.CenterScreen;
+            frm.Show();
+            this.Close();
+        }
 
         private void BtnLogout_Click(object sender, EventArgs e)
         {

@@ -214,6 +214,11 @@ namespace KoiSmart.Views
             riwayatForm.Show();
             this.Close();
         }
-        private void BttnReview_Click(object sender, EventArgs e) { }
+        private void BttnReview_Click(object sender, EventArgs e) 
+        {
+            V_ReviewCust reviewForm = new V_ReviewCust();
+            reviewForm.Show();
+            this.Close();
+        }
     }
 }

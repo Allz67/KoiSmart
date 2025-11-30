@@ -117,8 +117,21 @@ namespace KoiSmart.Views
             }
         }
 
-        private void BttnTransaksiPembelian_Click(object sender, EventArgs e) { }
-        private void BttnRiwayatTransaksi_Click(object sender, EventArgs e) { }
-        private void BttnReview_Click(object sender, EventArgs e) { /* Placeholder */ }
+        private void BttnTransaksiPembelian_Click(object sender, EventArgs e) 
+        {
+
+        }
+        private void BttnRiwayatTransaksi_Click(object sender, EventArgs e) 
+        {
+            V_RiwayatTransaksiCust riwayatForm = new V_RiwayatTransaksiCust();
+            riwayatForm.Show();
+            this.Close();
+        }
+        private void BttnReview_Click(object sender, EventArgs e) 
+        {
+            V_ReviewCust reviewForm = new V_ReviewCust();
+            reviewForm.Show();
+            this.Close();
+        }
     }
 }
