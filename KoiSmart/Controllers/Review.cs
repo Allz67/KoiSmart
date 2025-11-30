@@ -16,9 +16,6 @@ namespace KoiSmart.Controllers
             _db = new DbContext();
         }
 
-        // ================================
-        // CUSTOMER: TAMBAH REVIEW BARU
-        // ================================
         public bool AddReview(int idTransaksi, string isi, byte[] gambar)
         {
             using (var conn = new NpgsqlConnection(_db.connStr))
@@ -68,9 +65,6 @@ namespace KoiSmart.Controllers
             }
         }
 
-        // ================================
-        // CUSTOMER: CEK APAKAH BISA REVIEW
-        // ================================
         public bool CanReview(int idTransaksi)
         {
             using (var conn = new NpgsqlConnection(_db.connStr))
@@ -88,9 +82,6 @@ namespace KoiSmart.Controllers
             }
         }
 
-        // ================================
-        // ADMIN: GET SEMUA REVIEW
-        // ================================
         public List<ReviewData> GetAllReview()
         {
             var list = new List<ReviewData>();

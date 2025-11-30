@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using KoiSmart.Controllers;       // Akses TransaksiController
-using KoiSmart.Helpers;           // Akses AppSession, CartSession
-using KoiSmart.Models;            // Akses RiwayatTransaksi, Akun
-using KoiSmart.Views.Components;  // Akses CardTransaksi
+using KoiSmart.Controllers;       
+using KoiSmart.Helpers;           
+using KoiSmart.Models;           
+using KoiSmart.Views.Components;  
 
 namespace KoiSmart.Views
 {
@@ -20,7 +20,7 @@ namespace KoiSmart.Views
             InitializeComponent();
             _controller = new TransaksiController();
             _auth = new AuthController();
-            LoadUserInfo(); // Memuat info user saat form dibuat
+            LoadUserInfo(); 
             LoadRiwayatTransaksi();
         }
 
@@ -29,19 +29,13 @@ namespace KoiSmart.Views
             LoadRiwayatTransaksi();
         }
 
-        // --- METHOD TAMBAHAN: LOAD USER INFO (Fix agar username muncul) ---
         private void LoadUserInfo()
         {
             if (AppSession.IsAuthenticated && AppSession.CurrentUser != null)
             {
-                // LblUsername adalah label di sidebar yang menampilkan nama user
-                // Asumsi nama label di sidebar bernama LblUsername
                 LblUsername.Text = AppSession.CurrentUser.NamaDepan + " " + AppSession.CurrentUser.NamaBelakang;
             }
         }
-
-        // --- METHOD UTAMA: LOAD DAN DISPLAY DATA BERJENJANG ---
-        // File: V_HalTransaksi.cs
 
         private void LoadRiwayatTransaksi()
         {
@@ -55,7 +49,6 @@ namespace KoiSmart.Views
 
             if (listTrx == null || listTrx.Count == 0)
             {
-                // Tampilkan pesan jika tidak ada transaksi
                 Label lblKosong = new Label();
                 lblKosong.Text = "Anda belum memiliki riwayat transaksi.";
                 lblKosong.AutoSize = true;
@@ -65,19 +58,16 @@ namespace KoiSmart.Views
                 return;
             }
 
-            // Looping dan Tempel Kartu Besar (CardTransaksi)
             foreach (var trx in listTrx)
             {
                 CardTransaksi card = new CardTransaksi();
                 card.SetData(trx);
 
-                // Event Klik Kartu
                 card.OnViewDetails += (s, e) =>
                 {
                     OpenDetailReceipt(card.DataTrx);
                 };
 
-                // Atur lebar card agar pas (asumsi lebar container 980px)
                 card.Width = FlpContent.Width - 30;
                 FlpContent.Controls.Add(card);
             }
@@ -85,13 +75,25 @@ namespace KoiSmart.Views
 
         private void OpenDetailReceipt(RiwayatTransaksi trx)
         {
-            MessageBox.Show($"Detail Transaksi #{trx.IdTransaksi}\nStatus: {trx.Status}\nTotal: Rp {trx.TotalBelanja:N0}",
-                            "Detail Pesanan", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
+            if (trx == null)
+            {
+                MessageBox.Show("Data transaksi tidak tersedia.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
 
-        // ==========================================
-        // BAGIAN 2: TOMBOL NAVIGASI
-        // ==========================================
+            try
+            {
+                var frm = new V_KonfirmasiPembelian(trx)
+                {
+                    StartPosition = FormStartPosition.CenterParent
+                };
+                frm.ShowDialog(this);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Gagal membuka detail transaksi: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
 
         private void BttnHalUtama_Click(object sender, EventArgs e)
         {
@@ -119,7 +121,6 @@ namespace KoiSmart.Views
             }
         }
 
-        // Tombol yang tidak perlu implementasi logic di sini
         private void BttnTransaksiPembelian_Click(object sender, EventArgs e) { }
         private void BttnRiwayatTransaksi_Click(object sender, EventArgs e) { }
         private void BttnReview_Click(object sender, EventArgs e) { /* Placeholder */ }

@@ -9,7 +9,6 @@ namespace KoiSmart.Views
 {
     public partial class V_FormDataIkan : Form
     {
-        // Variabel Global
         private byte[] _gambarIkanBytes = null;
         private IkanController _controller;
 
@@ -18,12 +17,10 @@ namespace KoiSmart.Views
             InitializeComponent();
             _controller = new IkanController();
 
-            // Isi Pilihan Enum ke ComboBox
             CmbGender.DataSource = Enum.GetValues(typeof(GenderIkan));
             CmbGrade.DataSource = Enum.GetValues(typeof(GradeIkan));
         }
 
-        // --- TOMBOL UPLOAD GAMBAR ---
         private void BttnUploadIkan_Click(object sender, EventArgs e)
         {
             OpenFileDialog opf = new OpenFileDialog();
@@ -31,10 +28,8 @@ namespace KoiSmart.Views
 
             if (opf.ShowDialog() == DialogResult.OK)
             {
-                // Tampilkan Preview
                 PBUploadIkan.Image = Image.FromFile(opf.FileName);
 
-                // Ubah ke byte[] buat database
                 using (MemoryStream ms = new MemoryStream())
                 {
                     PBUploadIkan.Image.Save(ms, PBUploadIkan.Image.RawFormat);
@@ -43,16 +38,13 @@ namespace KoiSmart.Views
             }
         }
 
-        // --- TOMBOL BATAL ---
         private void BttnBatalBuat_Click(object sender, EventArgs e)
         {
-            this.Close(); // Balik ke halaman utama tanpa simpan
+            this.Close();
         }
 
-        // --- TOMBOL SIMPAN ---
         private void BttnSimpanBuat_Click(object sender, EventArgs e)
         {
-            // 1. Validasi Input (Gak boleh ada yang kosong)
             if (string.IsNullOrWhiteSpace(TbBuatJenis.Text) ||
                 string.IsNullOrWhiteSpace(TbPanjangIkan.Text) ||
                 string.IsNullOrWhiteSpace(TbHargaIkan.Text) ||
@@ -70,30 +62,24 @@ namespace KoiSmart.Views
 
             try
             {
-                // 2. Masukkan data ke Object Ikan
                 Ikan ikanBaru = new Ikan();
                 ikanBaru.jenis_ikan = TbBuatJenis.Text;
 
-                // Konversi Text ke Angka
                 ikanBaru.panjang = Convert.ToInt32(TbPanjangIkan.Text);
                 ikanBaru.harga = Convert.ToDecimal(TbHargaIkan.Text);
                 ikanBaru.stok = Convert.ToInt32(TbStokIkan.Text);
 
-                // Ambil Enum
                 ikanBaru.gender = (GenderIkan)CmbGender.SelectedItem;
                 ikanBaru.grade = (GradeIkan)CmbGrade.SelectedItem;
 
-                // Masukkan Gambar
                 ikanBaru.gambar_ikan = _gambarIkanBytes;
 
-                // 3. Panggil Controller (Method TambahIkan)
                 bool berhasil = _controller.TambahIkan(ikanBaru);
 
                 if (berhasil)
                 {
                     MessageBox.Show("Sukses! Data ikan berhasil disimpan.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                    // KODE RAHASIA: Memberitahu Dashboard untuk Refresh
                     this.DialogResult = DialogResult.OK;
                     this.Close();
                 }

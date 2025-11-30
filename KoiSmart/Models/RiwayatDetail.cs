@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 namespace KoiSmart.Models
 {
-    // DEFINISI CLASS YANG HILANG (Riwayat Detail Admin/Flat Report)
     public class RiwayatDetail
     {
         public int IdTransaksi { get; set; }

@@ -8,10 +8,8 @@ namespace KoiSmart.Views.Components
 {
     public partial class CardIkanCust : UserControl
     {
-        // Property biar Dashboard bisa akses data ikan di card ini
         public Ikan DataIkan { get; private set; }
 
-        // Property biar Dashboard bisa akses tombol 'Lihat'
         public Button BtnLihat => BttnCardLihat;
 
         public CardIkanCust()
@@ -19,28 +17,23 @@ namespace KoiSmart.Views.Components
             InitializeComponent();
         }
 
-        // --- METHOD PENTING: ISI DATA KE KARTU ---
         public void SetData(Ikan ikan)
         {
             DataIkan = ikan;
 
-            // 1. KEMBALIKAN TAMPILAN NORMAL (Hapus kuning-kuning)
 
-            // Reset Warna
-            LbCardNamaIkan.BackColor = Color.Transparent; // Atau Color.White
+            LbCardNamaIkan.BackColor = Color.Transparent; 
             LbCardHargaIkan.BackColor = Color.Transparent;
             LbStok.BackColor = Color.Transparent;
 
             LbCardNamaIkan.ForeColor = Color.Black;
-            LbCardHargaIkan.ForeColor = Color.Black; // Atau warna harga (misal OrangeRed)
+            LbCardHargaIkan.ForeColor = Color.Black; 
             LbStok.ForeColor = Color.Black;
 
-            // Isi Teks
             LbCardNamaIkan.Text = ikan.jenis_ikan;
             LbCardHargaIkan.Text = "Rp " + ikan.harga.ToString("N0");
             LbStok.Text = "Stok: " + ikan.stok.ToString();
 
-            // Cek stok, kalau 0 tulis Habis
             if (ikan.stok > 0)
                 LbStok.Text = "Stok : " + ikan.stok.ToString();
             else
@@ -49,8 +42,6 @@ namespace KoiSmart.Views.Components
                 LbStok.ForeColor = Color.Red;
             }
 
-            // 2. LOGIC GAMBAR (Debug Gambar Hilang)
-            // Kita cek dulu apakah byte-nya ada isinya
             if (ikan.gambar_ikan != null && ikan.gambar_ikan.Length > 0)
             {
                 try
@@ -63,20 +54,17 @@ namespace KoiSmart.Views.Components
                 }
                 catch
                 {
-                    // Kalau file gambarnya rusak (corrupt)
                     PBCardIkan.Image = null;
                     PBCardIkan.BackColor = Color.Gray;
                 }
             }
             else
             {
-                // Kalau di database emang NULL (Gak ada gambar)
                 PBCardIkan.Image = null;
-                PBCardIkan.BackColor = Color.LightGray; // Kasih warna abu muda biar ketahuan
+                PBCardIkan.BackColor = Color.LightGray; 
             }
         }
 
-        // Event Klik dikosongin aja, nanti diatur di Dashboard
         private void BttnCardLihat_Click(object sender, EventArgs e)
         {
 

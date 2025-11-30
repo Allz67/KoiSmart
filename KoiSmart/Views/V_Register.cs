@@ -17,7 +17,7 @@ namespace KoiSmart.Views
 
         private void V_Register_Load(object sender, EventArgs e)
         {
-            // Jika mau tambahin hal-hal default di sini
+           
         }
 
         private void LbToLogin_Click(object sender, EventArgs e)

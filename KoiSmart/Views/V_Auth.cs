@@ -11,7 +11,6 @@ namespace KoiSmart.Views
             InitializeComponent();
             _authController = new AuthController();
 
-            // event handler (kalau belum ditambah di designer)
             BttnLogin.Click += BttnLogin_Click;
             BttnRegister.Click += BttnRegister_Click;
         }

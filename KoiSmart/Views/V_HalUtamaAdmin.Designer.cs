@@ -41,68 +41,87 @@
             // 
             // BtnHalUtama
             // 
+            BtnHalUtama.BackColor = Color.Transparent;
             BtnHalUtama.BackgroundImage = Properties.Resources.Btn_Halaman_Utama_Adm_Hal_Utama_1;
+            BtnHalUtama.BackgroundImageLayout = ImageLayout.Center;
+            BtnHalUtama.FlatStyle = FlatStyle.Flat;
+            BtnHalUtama.ForeColor = Color.Transparent;
             BtnHalUtama.Location = new Point(44, 237);
             BtnHalUtama.Margin = new Padding(2);
             BtnHalUtama.Name = "BtnHalUtama";
-            BtnHalUtama.Size = new Size(228, 59);
+            BtnHalUtama.Size = new Size(272, 72);
             BtnHalUtama.TabIndex = 0;
-            BtnHalUtama.UseVisualStyleBackColor = true;
+            BtnHalUtama.UseVisualStyleBackColor = false;
             BtnHalUtama.Click += BtnHalUtama_Click;
             // 
             // BtnTransaksiPenjualan
             // 
+            BtnTransaksiPenjualan.BackColor = Color.Transparent;
             BtnTransaksiPenjualan.BackgroundImage = Properties.Resources.Btn_Transaksi_Penjualan_Adm_Hal_Utama_1;
+            BtnTransaksiPenjualan.FlatStyle = FlatStyle.Flat;
+            BtnTransaksiPenjualan.ForeColor = Color.Transparent;
             BtnTransaksiPenjualan.Location = new Point(44, 313);
             BtnTransaksiPenjualan.Margin = new Padding(2);
             BtnTransaksiPenjualan.Name = "BtnTransaksiPenjualan";
             BtnTransaksiPenjualan.Size = new Size(228, 40);
             BtnTransaksiPenjualan.TabIndex = 1;
-            BtnTransaksiPenjualan.UseVisualStyleBackColor = true;
+            BtnTransaksiPenjualan.UseVisualStyleBackColor = false;
             BtnTransaksiPenjualan.Click += BtnTransaksiPenjualan_Click;
             // 
             // BtnRiwayatTransaksi
             // 
+            BtnRiwayatTransaksi.BackColor = Color.Transparent;
             BtnRiwayatTransaksi.BackgroundImage = Properties.Resources.Btn_Riwayat_Transaksi_Adm_Hal_Utama_1;
+            BtnRiwayatTransaksi.FlatStyle = FlatStyle.Flat;
+            BtnRiwayatTransaksi.ForeColor = Color.Transparent;
             BtnRiwayatTransaksi.Location = new Point(44, 375);
             BtnRiwayatTransaksi.Margin = new Padding(2);
             BtnRiwayatTransaksi.Name = "BtnRiwayatTransaksi";
             BtnRiwayatTransaksi.Size = new Size(217, 42);
             BtnRiwayatTransaksi.TabIndex = 2;
-            BtnRiwayatTransaksi.UseVisualStyleBackColor = true;
+            BtnRiwayatTransaksi.UseVisualStyleBackColor = false;
             BtnRiwayatTransaksi.Click += BtnRiwayatTransaksi_Click;
             // 
             // BtnLaporanTransaksi
             // 
+            BtnLaporanTransaksi.BackColor = Color.Transparent;
             BtnLaporanTransaksi.BackgroundImage = Properties.Resources.Btn_Laporan_Transaksi_Adm_Hal_Utama_1;
-            BtnLaporanTransaksi.Location = new Point(44, 437);
+            BtnLaporanTransaksi.FlatStyle = FlatStyle.Flat;
+            BtnLaporanTransaksi.ForeColor = Color.Transparent;
+            BtnLaporanTransaksi.Location = new Point(44, 440);
             BtnLaporanTransaksi.Margin = new Padding(2);
             BtnLaporanTransaksi.Name = "BtnLaporanTransaksi";
             BtnLaporanTransaksi.Size = new Size(219, 42);
             BtnLaporanTransaksi.TabIndex = 3;
-            BtnLaporanTransaksi.UseVisualStyleBackColor = true;
+            BtnLaporanTransaksi.UseVisualStyleBackColor = false;
             BtnLaporanTransaksi.Click += BtnLaporanTransaksi_Click;
             // 
             // BtnReviewCust
             // 
+            BtnReviewCust.BackColor = Color.Transparent;
             BtnReviewCust.BackgroundImage = Properties.Resources.Btn_Review_Pelanggan_Adm_Hal_Utama_1;
+            BtnReviewCust.FlatStyle = FlatStyle.Flat;
+            BtnReviewCust.ForeColor = Color.Transparent;
             BtnReviewCust.Location = new Point(44, 506);
             BtnReviewCust.Margin = new Padding(2);
             BtnReviewCust.Name = "BtnReviewCust";
             BtnReviewCust.Size = new Size(219, 44);
             BtnReviewCust.TabIndex = 4;
-            BtnReviewCust.UseVisualStyleBackColor = true;
+            BtnReviewCust.UseVisualStyleBackColor = false;
             BtnReviewCust.Click += BtnReviewCust_Click;
             // 
             // BtnLogout
             // 
+            BtnLogout.BackColor = Color.Transparent;
             BtnLogout.BackgroundImage = Properties.Resources.Btn_Logout_Adm_Hal_Utama_1;
+            BtnLogout.FlatStyle = FlatStyle.Flat;
+            BtnLogout.ForeColor = Color.Transparent;
             BtnLogout.Location = new Point(70, 626);
             BtnLogout.Margin = new Padding(2);
             BtnLogout.Name = "BtnLogout";
-            BtnLogout.Size = new Size(223, 57);
+            BtnLogout.Size = new Size(233, 57);
             BtnLogout.TabIndex = 5;
-            BtnLogout.UseVisualStyleBackColor = true;
+            BtnLogout.UseVisualStyleBackColor = false;
             BtnLogout.Click += BtnLogout_Click;
             // 
             // BtnTambahIkan

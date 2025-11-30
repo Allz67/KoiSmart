@@ -15,9 +15,6 @@ namespace KoiSmart.Controllers
             _db = new DbContext();
         }
 
-        // ============================
-        // GET WAKTU LAPORAN TERAKHIR
-        // ============================
         public DateTime? GetLastReportTime()
         {
             using (var conn = new NpgsqlConnection(_db.connStr))
@@ -34,9 +31,6 @@ namespace KoiSmart.Controllers
             }
         }
 
-        // ===============================================================
-        // GET DATA LAPORAN SEJAK LAPORAN TERAKHIR (TRANSAKSI BARU SAJA)
-        // ===============================================================
         public List<LaporanTransaksiData> GetTransaksiSetelahLaporan()
         {
             List<LaporanTransaksiData> list = new List<LaporanTransaksiData>();
@@ -90,9 +84,6 @@ namespace KoiSmart.Controllers
             return list;
         }
 
-        // ===========================
-        // GET TOTAL PEMASUKAN
-        // ===========================
         public decimal GetTotalPemasukan(DateTime? last)
         {
             string filter = last != null ? "WHERE t.tanggal_transaksi > @last" : "";
@@ -107,9 +98,6 @@ namespace KoiSmart.Controllers
             return Convert.ToDecimal(cmdScalar(_db.connStr, query, last));
         }
 
-        // ===========================
-        // GET TOTAL PENGELUARAN
-        // ===========================
         public decimal GetTotalPengeluaran(DateTime? last)
         {
             string filter = last != null ? "WHERE tanggal_pengeluaran > @last" : "";
@@ -122,10 +110,6 @@ namespace KoiSmart.Controllers
 
             return Convert.ToDecimal(cmdScalar(_db.connStr, query, last));
         }
-
-        // ===========================
-        // GET IKAN TERLARIS
-        // ===========================
         public string GetIkanTerlaris(DateTime? last)
         {
             string filter = last != null ? "WHERE t.tanggal_transaksi > @last" : "";
@@ -145,9 +129,6 @@ namespace KoiSmart.Controllers
             return result == null ? "Tidak Ada Penjualan" : result.ToString();
         }
 
-        // ===========================
-        // SIMPAN LAPORAN BARU
-        // ===========================
         public bool SimpanLaporan(LaporanResult data)
         {
             using (var conn = new NpgsqlConnection(_db.connStr))
@@ -171,10 +152,6 @@ namespace KoiSmart.Controllers
                 }
             }
         }
-
-        // ===========================
-        // HELPER METHOD CMD SCALAR
-        // ===========================
         private object cmdScalar(NpgsqlConnection conn, string query)
         {
             using (var cmd = new NpgsqlCommand(query, conn))

@@ -111,6 +111,7 @@
             // 
             FlpContent.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             FlpContent.AutoScroll = true;
+            FlpContent.BackColor = SystemColors.Window;
             FlpContent.FlowDirection = FlowDirection.TopDown;
             FlpContent.Location = new Point(376, 98);
             FlpContent.Name = "FlpContent";

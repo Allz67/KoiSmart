@@ -9,11 +9,9 @@ namespace KoiSmart.Views
 {
     public partial class V_FormUbahIkan : Form
     {
-        // Variabel Global
         private byte[]? _gambarIkanBytes = null;
         private IkanController _controller;
 
-        // Edit mode
         private bool _isEditMode = false;
         private int _editingId = 0;
 
@@ -22,12 +20,10 @@ namespace KoiSmart.Views
             InitializeComponent();
             _controller = new IkanController();
 
-            // Isi Pilihan Enum ke ComboBox
             CmbGender.DataSource = Enum.GetValues(typeof(GenderIkan));
             CmbGrade.DataSource = Enum.GetValues(typeof(GradeIkan));
         }
 
-        // Overload: buka form dalam mode edit dengan object Ikan
         public V_FormUbahIkan(Ikan ikan) : this()
         {
             if (ikan == null) throw new ArgumentNullException(nameof(ikan));
@@ -35,7 +31,6 @@ namespace KoiSmart.Views
             _isEditMode = true;
             _editingId = ikan.IdIkan;
 
-            // isi kontrol dengan data ikan
             TbBuatJenis.Text = ikan.jenis_ikan;
             TbPanjangIkan.Text = ikan.panjang.ToString();
             TbHargaIkan.Text = ikan.harga.ToString();
@@ -63,7 +58,6 @@ namespace KoiSmart.Views
             BttnSimpanBuat.Text = "Update";
         }
 
-        // --- TOMBOL UPLOAD GAMBAR ---
         private void BttnUploadIkan_Click(object sender, EventArgs e)
         {
             OpenFileDialog opf = new OpenFileDialog();
@@ -83,7 +77,6 @@ namespace KoiSmart.Views
             }
         }
 
-        // --- TOMBOL BATAL ---
         private void BttnBatalBuat_Click(object sender, EventArgs e)
         {
             this.Close(); // Balik ke halaman utama tanpa simpan

@@ -9,7 +9,6 @@ using System.Windows.Forms;
 
 namespace KoiSmart.Controllers
 {
-    // Pastikan Interface IIkan kamu juga disesuaikan ya (kalo pake interface)
     public class IkanController : IIkan
     {
         private DbContext _dbContext;
@@ -19,7 +18,6 @@ namespace KoiSmart.Controllers
             _dbContext = new DbContext();
         }
 
-        // --- UBAH 1: Ganti nama jadi 'TambahIkan' & return 'bool' ---
         public bool TambahIkan(Ikan ikan)
         {
             try
@@ -34,29 +32,26 @@ namespace KoiSmart.Controllers
                     using (var cmd = new NpgsqlCommand(query, conn))
                     {
                         cmd.Parameters.AddWithValue("@panjang", ikan.panjang);
-                        // Handle gambar null biar gak error di DB
                         cmd.Parameters.AddWithValue("@gambar", ikan.gambar_ikan ?? (object)DBNull.Value);
                         cmd.Parameters.AddWithValue("@jenis", ikan.jenis_ikan);
                         cmd.Parameters.AddWithValue("@harga", ikan.harga);
                         cmd.Parameters.AddWithValue("@stok", ikan.stok);
-                        cmd.Parameters.AddWithValue("@gender", ikan.gender.ToString()); // Masuk DB sebagai String
-                        cmd.Parameters.AddWithValue("@grade", ikan.grade.ToString());   // Masuk DB sebagai String
+                        cmd.Parameters.AddWithValue("@gender", ikan.gender.ToString()); 
+                        cmd.Parameters.AddWithValue("@grade", ikan.grade.ToString()); 
 
                         cmd.ExecuteNonQuery();
                     }
                 }
-                return true; // Berhasil
+                return true; 
             }
             catch (Exception ex)
             {
-                // Log and show real error to help debugging
                 Debug.WriteLine("TambahIkan error: " + ex);
                 MessageBox.Show("Gagal menyimpan ke database. Error: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false; // Gagal
+                return false; 
             }
         }
 
-        // --- UBAH 2: Sesuaikan Update (Opsional, buat nanti) ---
         public bool UpdateIkan(Ikan ikan)
         {
             try
@@ -92,8 +87,6 @@ namespace KoiSmart.Controllers
                 return false;
             }
         }
-
-        // --- UBAH 3: Delete juga return bool ---
         public bool DeleteIkan(int id)
         {
             try
@@ -117,8 +110,6 @@ namespace KoiSmart.Controllers
                 return false;
             }
         }
-
-        // --- UBAH 4: Ganti nama jadi 'AmbilSemuaIkan' biar sama kayak Dashboard ---
         public List<Ikan> AmbilSemuaIkan()
         {
             var list = new List<Ikan>();
@@ -128,7 +119,7 @@ namespace KoiSmart.Controllers
                 using (var conn = new NpgsqlConnection(_dbContext.connStr))
                 {
                     conn.Open();
-                    string query = "SELECT * FROM ikan ORDER BY id_ikan DESC"; // Tambahin ORDER BY biar yg baru nongol diatas
+                    string query = "SELECT * FROM ikan ORDER BY id_ikan DESC"; 
 
                     using (var cmd = new NpgsqlCommand(query, conn))
                     using (var reader = cmd.ExecuteReader())

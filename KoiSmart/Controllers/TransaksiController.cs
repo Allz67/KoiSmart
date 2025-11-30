@@ -15,16 +15,13 @@ namespace KoiSmart.Controllers
     public class TransaksiController
     {
         private DbContext _dbContext;
-        private const int DefaultCommandTimeoutSeconds = 60; // increase for large payloads
+        private const int DefaultCommandTimeoutSeconds = 60; 
 
         public TransaksiController()
         {
             _dbContext = new DbContext();
         }
 
-        // =========================================================
-        // BAGIAN 1: CREATE (Buat Pesanan) - LOGIC INSERT & ROLLBACK
-        // =========================================================
         public bool BuatPesanan(int idAkun, byte[] buktiPembayaran, IReadOnlyList<CartItem> items)
         {
             using (var conn = new NpgsqlConnection(_dbContext.connStr))
@@ -34,7 +31,6 @@ namespace KoiSmart.Controllers
                 {
                     try
                     {
-                        // 1. INSERT HEADER TRANSAKSI
                         string queryHeader = @"
                             INSERT INTO transaksi (id_akun, tanggal_transaksi, total_harga, bukti_pembayaran, status_transaksi)
                             VALUES (@idAkun, @tanggal, @total, @bukti, 'Pending')
@@ -48,8 +44,6 @@ namespace KoiSmart.Controllers
                             cmdHeader.Parameters.AddWithValue("@idAkun", idAkun);
                             cmdHeader.Parameters.AddWithValue("@tanggal", DateTime.Now);
                             cmdHeader.Parameters.AddWithValue("@total", CartSession.GetTotal());
-
-                            // Explicitly specify bytea type to avoid ambiguous parameter handling and large-write surprises
                             var buktiParam = new NpgsqlParameter("@bukti", NpgsqlDbType.Bytea);
                             buktiParam.Value = buktiPembayaran ?? (object)DBNull.Value;
                             cmdHeader.Parameters.Add(buktiParam);
@@ -57,10 +51,8 @@ namespace KoiSmart.Controllers
                             idTransaksiBaru = (int)cmdHeader.ExecuteScalar();
                         }
 
-                        // 2. INSERT DETAIL TRANSAKSI & UPDATE STOK IKAN
                         foreach (var item in items)
                         {
-                            // A. Insert Detail
                             string queryDetail = @"
                                 INSERT INTO detail_transaksi (id_transaksi, id_ikan, jumlah_pembelian, subtotal)
                                 VALUES (@idTrans, @idIkan, @qty, @subtotal)";
@@ -75,7 +67,6 @@ namespace KoiSmart.Controllers
                                 cmdDetail.ExecuteNonQuery();
                             }
 
-                            // B. Update Stok Ikan (Kurangi Stok)
                             string queryStok = "UPDATE ikan SET stok = stok - @qty WHERE id_ikan = @idIkan";
                             using (var cmdStok = new NpgsqlCommand(queryStok, conn, trans))
                             {
@@ -91,7 +82,6 @@ namespace KoiSmart.Controllers
                     }
                     catch (Exception ex)
                     {
-                        // Safe rollback: transaction/connection may already be disposed if a low-level network error occurred.
                         try
                         {
                             if (trans != null && trans.Connection != null && trans.Connection.State == ConnectionState.Open)
@@ -105,7 +95,6 @@ namespace KoiSmart.Controllers
                         }
                         catch (Exception rbEx)
                         {
-                            // Log rollback failure but continue to handle original error
                             Debug.WriteLine("Rollback failed: " + rbEx);
                         }
 
@@ -116,10 +105,6 @@ namespace KoiSmart.Controllers
                 }
             }
         }
-
-        // =========================================================
-        // BAGIAN 2: READ (Ambil Riwayat Transaksi) - LOGIC UTAMA
-        // =========================================================
 
         public List<RiwayatTransaksi> GetRiwayat(int idUser)
         {
@@ -145,8 +130,9 @@ namespace KoiSmart.Controllers
                     conn.Open();
 
                     string query = $@"
-                        SELECT t.id_transaksi, t.tanggal_transaksi, t.status_transaksi, t.total_harga,
-                               d.jumlah_pembelian, i.jenis_ikan, i.harga, i.gambar_ikan, d.subtotal
+                        SELECT t.id_transaksi, t.tanggal_transaksi, t.status_transaksi, t.total_harga, t.bukti_pembayaran,
+                               d.id_ikan, d.jumlah_pembelian, i.jenis_ikan, i.harga, i.gambar_ikan, d.subtotal,
+                               i.panjang, i.gender, i.grade
                         FROM transaksi t
                         JOIN detail_transaksi d ON t.id_transaksi = d.id_transaksi
                         JOIN ikan i ON d.id_ikan = i.id_ikan
@@ -183,6 +169,7 @@ namespace KoiSmart.Controllers
                                         Tanggal = reader.IsDBNull(reader.GetOrdinal("tanggal_transaksi")) ? DateTime.MinValue : reader.GetDateTime(reader.GetOrdinal("tanggal_transaksi")),
                                         Status = reader["status_transaksi"].ToString(),
                                         TotalBelanja = reader.IsDBNull(reader.GetOrdinal("total_harga")) ? 0m : Convert.ToDecimal(reader["total_harga"]),
+                                        BuktiPembayaran = reader["bukti_pembayaran"] == DBNull.Value ? null : (byte[])reader["bukti_pembayaran"],
                                         Items = new List<RiwayatItem>()
                                     };
                                     listRiwayat.Add(trx);
@@ -190,10 +177,14 @@ namespace KoiSmart.Controllers
 
                                 trx.Items.Add(new RiwayatItem
                                 {
+                                    IdIkan = reader.IsDBNull(reader.GetOrdinal("id_ikan")) ? 0 : Convert.ToInt32(reader["id_ikan"]),
                                     NamaIkan = reader["jenis_ikan"].ToString(),
                                     Qty = reader.IsDBNull(reader.GetOrdinal("jumlah_pembelian")) ? 0 : Convert.ToInt32(reader["jumlah_pembelian"]),
                                     HargaSatuan = reader.IsDBNull(reader.GetOrdinal("harga")) ? 0m : Convert.ToDecimal(reader["harga"]),
-                                    Gambar = reader["gambar_ikan"] == DBNull.Value ? null : (byte[])reader["gambar_ikan"]
+                                    Gambar = reader["gambar_ikan"] == DBNull.Value ? null : (byte[])reader["gambar_ikan"],
+                                    Panjang = reader.IsDBNull(reader.GetOrdinal("panjang")) ? 0 : Convert.ToInt32(reader["panjang"]),
+                                    Gender = reader["gender"] == DBNull.Value ? string.Empty : reader["gender"].ToString(),
+                                    Grade = reader["grade"] == DBNull.Value ? string.Empty : reader["grade"].ToString()
                                 });
                             }
                         }
@@ -204,6 +195,93 @@ namespace KoiSmart.Controllers
                     MessageBox.Show("Gagal memuat riwayat: " + ex.Message, "DEBUG DATABASE FAILURE");
                 }
             }
+            return listRiwayat;
+        }
+
+        public List<RiwayatTransaksi> GetAllRiwayat(List<string> statusList = null)
+        {
+            var listRiwayat = new List<RiwayatTransaksi>();
+            string statusParamsSql = string.Empty;
+            string statusFilterClause = string.Empty;
+
+            if (statusList != null && statusList.Count > 0)
+            {
+                statusParamsSql = string.Join(",", statusList.Select((s, i) => $"@status_transaksi{i}"));
+                statusFilterClause = $" AND t.status_transaksi IN ({statusParamsSql})";
+            }
+
+            using (var conn = new NpgsqlConnection(_dbContext.connStr))
+            {
+                try
+                {
+                    conn.Open();
+
+                    string query = $@"
+                        SELECT t.id_transaksi, t.tanggal_transaksi, t.status_transaksi, t.total_harga, t.bukti_pembayaran,
+                               d.id_ikan, d.jumlah_pembelian, i.jenis_ikan, i.harga, i.gambar_ikan, d.subtotal,
+                               i.panjang, i.gender, i.grade
+                        FROM transaksi t
+                        JOIN detail_transaksi d ON t.id_transaksi = d.id_transaksi
+                        JOIN ikan i ON d.id_ikan = i.id_ikan
+                        WHERE 1=1
+                        {statusFilterClause}
+                        ORDER BY t.tanggal_transaksi DESC";
+
+                    using (var cmd = new NpgsqlCommand(query, conn))
+                    {
+                        cmd.CommandTimeout = DefaultCommandTimeoutSeconds;
+
+                        if (!string.IsNullOrEmpty(statusParamsSql))
+                        {
+                            for (int i = 0; i < statusList.Count; i++)
+                            {
+                                cmd.Parameters.AddWithValue($"@status_transaksi{i}", statusList[i]);
+                            }
+                        }
+
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                int idTrx = Convert.ToInt32(reader["id_transaksi"]);
+
+                                var trx = listRiwayat.FirstOrDefault(x => x.IdTransaksi == idTrx);
+
+                                if (trx == null)
+                                {
+                                    trx = new RiwayatTransaksi
+                                    {
+                                        IdTransaksi = idTrx,
+                                        Tanggal = reader.IsDBNull(reader.GetOrdinal("tanggal_transaksi")) ? DateTime.MinValue : reader.GetDateTime(reader.GetOrdinal("tanggal_transaksi")),
+                                        Status = reader["status_transaksi"].ToString(),
+                                        TotalBelanja = reader.IsDBNull(reader.GetOrdinal("total_harga")) ? 0m : Convert.ToDecimal(reader["total_harga"]),
+                                        BuktiPembayaran = reader["bukti_pembayaran"] == DBNull.Value ? null : (byte[])reader["bukti_pembayaran"],
+                                        Items = new List<RiwayatItem>()
+                                    };
+                                    listRiwayat.Add(trx);
+                                }
+
+                                trx.Items.Add(new RiwayatItem
+                                {
+                                    IdIkan = reader.IsDBNull(reader.GetOrdinal("id_ikan")) ? 0 : Convert.ToInt32(reader["id_ikan"]),
+                                    NamaIkan = reader["jenis_ikan"].ToString(),
+                                    Qty = reader.IsDBNull(reader.GetOrdinal("jumlah_pembelian")) ? 0 : Convert.ToInt32(reader["jumlah_pembelian"]),
+                                    HargaSatuan = reader.IsDBNull(reader.GetOrdinal("harga")) ? 0m : Convert.ToDecimal(reader["harga"]),
+                                    Gambar = reader["gambar_ikan"] == DBNull.Value ? null : (byte[])reader["gambar_ikan"],
+                                    Panjang = reader.IsDBNull(reader.GetOrdinal("panjang")) ? 0 : Convert.ToInt32(reader["panjang"]),
+                                    Gender = reader["gender"] == DBNull.Value ? string.Empty : reader["gender"].ToString(),
+                                    Grade = reader["grade"] == DBNull.Value ? string.Empty : reader["grade"].ToString()
+                                });
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Gagal memuat riwayat transaksi (admin): " + ex.Message, "DEBUG DATABASE FAILURE");
+                }
+            }
+
             return listRiwayat;
         }
     }

@@ -18,10 +18,6 @@ namespace KoiSmart.Controllers
         {
             _dbContext = new DbContext();
         }
-
-        // =========================================================
-        // METHOD UTAMA: AMBIL DATA RIWAYAT CUSTOMER (Nested/Bersarang)
-        // =========================================================
         public List<RiwayatTransaksi> GetRiwayat(int idUser)
         {
             var listRiwayat = new List<RiwayatTransaksi>();
@@ -31,8 +27,6 @@ namespace KoiSmart.Controllers
                 try
                 {
                     conn.Open();
-
-                    // Query yang menggabungkan Transaksi, Detail, dan Ikan
                     string query = @"
                         SELECT t.id_transaksi, t.tanggal_transaksi, t.status, t.total_harga,
                                d.jumlah_pembelian, i.jenis_ikan, i.harga, i.gambar_ikan, d.subtotal
@@ -48,17 +42,13 @@ namespace KoiSmart.Controllers
 
                         using (var reader = cmd.ExecuteReader())
                         {
-                            // Algoritma Grouping (Mengubah List Flat hasil SQL menjadi Bersarang di C#)
                             while (reader.Read())
                             {
                                 int idTrx = Convert.ToInt32(reader["id_transaksi"]);
-
-                                // Cari/buat Header Transaksi (RiwayatTransaksi)
                                 var trx = listRiwayat.FirstOrDefault(x => x.IdTransaksi == idTrx);
 
                                 if (trx == null)
                                 {
-                                    // Bikin Header baru jika belum ada
                                     trx = new RiwayatTransaksi
                                     {
                                         IdTransaksi = idTrx,
@@ -70,7 +60,6 @@ namespace KoiSmart.Controllers
                                     listRiwayat.Add(trx);
                                 }
 
-                                // Tambahkan Item Barang (RiwayatItem) ke Header tersebut
                                 trx.Items.Add(new RiwayatItem
                                 {
                                     NamaIkan = reader["jenis_ikan"].ToString(),
