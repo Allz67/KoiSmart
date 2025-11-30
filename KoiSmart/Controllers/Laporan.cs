@@ -1,8 +1,6 @@
 ﻿using Npgsql;
 using KoiSmart.Database;
 using KoiSmart.Models;
-using System;
-using System.Collections.Generic;
 
 namespace KoiSmart.Controllers
 {
@@ -14,54 +12,95 @@ namespace KoiSmart.Controllers
         {
             _db = new DbContext();
         }
-
-        public DateTime? GetLastReportTime()
+        public List<PeriodeLaporanDTO> GetAvailableReportPeriods()
         {
+            var availablePeriods = new List<PeriodeLaporanDTO>();
+
+            using (var conn = new NpgsqlConnection(_db.connStr))
+            {
+                try
+                {
+                    conn.Open();
+                    string query = @"
+                        SELECT DISTINCT 
+                            EXTRACT(YEAR FROM tanggal_transaksi) AS tahun,
+                            EXTRACT(MONTH FROM tanggal_transaksi) AS bulan
+                        FROM transaksi
+                        WHERE status_transaksi IN ('Selesai', 'Terkonfirmasi') -- Hanya hitung transaksi yang berhasil
+                        ORDER BY tahun DESC, bulan DESC";
+
+                    using (var cmd = new NpgsqlCommand(query, conn))
+                    {
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                int tahun = Convert.ToInt32(reader["tahun"]);
+                                int bulan = Convert.ToInt32(reader["bulan"]);
+
+                                availablePeriods.Add(new PeriodeLaporanDTO
+                                {
+                                    Tahun = tahun,
+                                    Bulan = bulan,
+                                    NamaBulan = new DateTime(tahun, bulan, 1).ToString("MMMM") 
+                                });
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine("Gagal memuat periode laporan: " + ex.Message);
+                }
+            }
+            return availablePeriods;
+        }
+        private (string Filter, NpgsqlParameter[] Parameters) GetPeriodFilter(int? bulan, int? tahun)
+        {
+            if (bulan.HasValue && tahun.HasValue)
+            {
+                DateTime startDate = new DateTime(tahun.Value, bulan.Value, 1);
+                DateTime endDate = startDate.AddMonths(1);
+
+                string filter = "WHERE t.tanggal_transaksi >= @startDate AND t.tanggal_transaksi < @endDate";
+
+                NpgsqlParameter[] parameters = new NpgsqlParameter[]
+                {
+                    new NpgsqlParameter("@startDate", startDate),
+                    new NpgsqlParameter("@endDate", endDate)
+                };
+                return (filter, parameters);
+            }
+            return (string.Empty, Array.Empty<NpgsqlParameter>());
+        }
+        public List<LaporanTransaksiData> GetTransaksiDataByPeriod(int bulan, int tahun)
+        {
+            List<LaporanTransaksiData> list = new List<LaporanTransaksiData>();
+            var filterResult = GetPeriodFilter(bulan, tahun);
+
             using (var conn = new NpgsqlConnection(_db.connStr))
             {
                 conn.Open();
 
-                string query = "SELECT MAX(waktu_laporan) FROM laporan";
-
-                var result = cmdScalar(conn, query);
-                if (result == DBNull.Value || result == null)
-                    return null;
-
-                return Convert.ToDateTime(result);
-            }
-        }
-
-        public List<LaporanTransaksiData> GetTransaksiSetelahLaporan()
-        {
-            List<LaporanTransaksiData> list = new List<LaporanTransaksiData>();
-            DateTime? last = GetLastReportTime();
-
-            using (var conn = new NpgsqlConnection(_db.connStr))
-            {
-                conn.Open();    
-
-                string condition = last != null ? "WHERE t.tanggal_transaksi > @last" : "";
-
                 string query = $@"
-                    SELECT 
-                        t.id_transaksi,
-                        a.nama_depan || ' ' || a.nama_belakang AS nama_pelanggan,
-                        t.tanggal_transaksi,
-                        SUM(dt.subtotal),
-                        SUM(dt.jumlah_pembelian),
-                        t.status_transaksi
-                    FROM transaksi t
-                    JOIN akun a ON t.id_akun = a.id_akun
-                    JOIN detail_transaksi dt ON t.id_transaksi = dt.id_transaksi
-                    {condition}
-                    GROUP BY t.id_transaksi, a.nama_depan, a.nama_belakang
-                    ORDER BY t.tanggal_transaksi ASC
-                ";
+                     SELECT 
+                         t.id_transaksi,
+                         a.username AS nama_pelanggan, -- Ganti a.nama_depan || ' ' || a.nama_belakang jika kolom tidak ada
+                         t.tanggal_transaksi,
+                         t.total_harga, -- Lebih baik pakai kolom total_harga dari header jika sudah benar
+                         SUM(dt.jumlah_pembelian) AS total_item,
+                         t.status_transaksi
+                     FROM transaksi t
+                     JOIN akun a ON t.id_akun = a.id_akun
+                     JOIN detail_transaksi dt ON t.id_transaksi = dt.id_transaksi
+                     {filterResult.Filter}
+                     GROUP BY t.id_transaksi, a.username, t.tanggal_transaksi, t.total_harga, t.status_transaksi
+                     ORDER BY t.tanggal_transaksi ASC
+                 ";
 
                 using (var cmd = new NpgsqlCommand(query, conn))
                 {
-                    if (last != null)
-                        cmd.Parameters.AddWithValue("@last", last.Value);
+                    cmd.Parameters.AddRange(filterResult.Parameters);
 
                     using (var reader = cmd.ExecuteReader())
                     {
@@ -70,109 +109,82 @@ namespace KoiSmart.Controllers
                             list.Add(new LaporanTransaksiData
                             {
                                 IdTransaksi = reader.GetInt32(0),
-                                NamaPelanggan = reader.GetString(1),
+                                NamaPelanggan = reader["nama_pelanggan"].ToString(),
                                 TanggalTransaksi = reader.GetDateTime(2),
-                                TotalHarga = Convert.ToDecimal(reader[3]),
-                                TotalItem = reader.GetInt32(4),
-                                Status = reader.GetString(5)
+                                TotalHarga = Convert.ToDecimal(reader["total_harga"]), 
+                                TotalItem = Convert.ToInt32(reader["total_item"]),
+                                Status = reader["status_transaksi"].ToString()
                             });
                         }
                     }
                 }
             }
-
             return list;
         }
-
-        public decimal GetTotalPemasukan(DateTime? last)
+        private object cmdScalarByPeriod(string queryTemplate, int? bulan, int? tahun, string countColumn = null)
         {
-            string filter = last != null ? "WHERE t.tanggal_transaksi > @last" : "";
+            var filterResult = GetPeriodFilter(bulan, tahun);
+            string finalQuery = queryTemplate.Replace("{filter}", filterResult.Filter);
 
-            string query = $@"
-                SELECT COALESCE(SUM(dt.subtotal), 0)
-                FROM transaksi t
-                JOIN detail_transaksi dt ON dt.id_transaksi = t.id_transaksi
-                {filter}
-            ";
-
-            return Convert.ToDecimal(cmdScalar(_db.connStr, query, last));
-        }
-
-        public decimal GetTotalPengeluaran(DateTime? last)
-        {
-            string filter = last != null ? "WHERE tanggal_pengeluaran > @last" : "";
-
-            string query = $@"
-                SELECT COALESCE(SUM(jumlah), 0)
-                FROM pengeluaran
-                {filter}
-            ";
-
-            return Convert.ToDecimal(cmdScalar(_db.connStr, query, last));
-        }
-        public string GetIkanTerlaris(DateTime? last)
-        {
-            string filter = last != null ? "WHERE t.tanggal_transaksi > @last" : "";
-
-            string query = $@"
-                SELECT i.jenis_ikan, SUM(dt.jumlah_pembelian) AS total
-                FROM detail_transaksi dt
-                JOIN transaksi t ON t.id_transaksi = dt.id_transaksi
-                JOIN ikan i ON i.id_ikan = dt.id_ikan
-                {filter}
-                GROUP BY i.jenis_ikan
-                ORDER BY total DESC
-                LIMIT 1
-            ";
-
-            var result = cmdScalar(_db.connStr, query, last);
-            return result == null ? "Tidak Ada Penjualan" : result.ToString();
-        }
-
-        public bool SimpanLaporan(LaporanResult data)
-        {
             using (var conn = new NpgsqlConnection(_db.connStr))
             {
                 conn.Open();
-
-                string query = @"
-                    INSERT INTO laporan
-                    (waktu_laporan, total_pemasukan, total_pengeluaran, ikan_terlaris)
-                    VALUES (@waktu, @pemasukan, @pengeluaran, @ikan)
-                ";
-
-                using (var cmd = new NpgsqlCommand(query, conn))
+                using (var cmd = new NpgsqlCommand(finalQuery, conn))
                 {
-                    cmd.Parameters.AddWithValue("@waktu", data.WaktuLaporan);
-                    cmd.Parameters.AddWithValue("@pemasukan", data.TotalPemasukan);
-                    cmd.Parameters.AddWithValue("@pengeluaran", data.TotalPengeluaran);
-                    cmd.Parameters.AddWithValue("@ikan", data.IkanTerlaris);
-
-                    return cmd.ExecuteNonQuery() > 0;
-                }
-            }
-        }
-        private object cmdScalar(NpgsqlConnection conn, string query)
-        {
-            using (var cmd = new NpgsqlCommand(query, conn))
-            {
-                return cmd.ExecuteScalar();
-            }
-        }
-
-        private object cmdScalar(string connStr, string query, DateTime? last)
-        {
-            using (var conn = new NpgsqlConnection(connStr))
-            {
-                conn.Open();
-                using (var cmd = new NpgsqlCommand(query, conn))
-                {
-                    if (last != null)
-                        cmd.Parameters.AddWithValue("@last", last.Value);
-
+                    cmd.Parameters.AddRange(filterResult.Parameters);
                     return cmd.ExecuteScalar();
                 }
             }
+        }
+
+        public decimal GetTotalPemasukan(int? bulan, int? tahun)
+        {
+            string query = $@"
+                SELECT COALESCE(SUM(t.total_harga), 0)
+                FROM transaksi t
+                {{filter}}
+                AND t.status_transaksi IN ('Selesai', 'Terkonfirmasi')
+            ";
+            return Convert.ToDecimal(cmdScalarByPeriod(query, bulan, tahun));
+        }
+
+        public decimal GetTotalPengeluaran(int? bulan, int? tahun)
+        {
+            string query = $@"
+                SELECT COALESCE(SUM(jumlah), 0)
+                FROM pengeluaran p
+                {{filter}}
+            ";
+            return Convert.ToDecimal(cmdScalarByPeriod(query, bulan, tahun));
+        }
+
+        public string GetIkanTerlaris(int? bulan, int? tahun)
+        {
+            string query = $@"
+                SELECT i.jenis_ikan
+                FROM detail_transaksi dt
+                JOIN transaksi t ON t.id_transaksi = dt.id_transaksi
+                JOIN ikan i ON i.id_ikan = dt.id_ikan
+                {{filter}}
+                AND t.status_transaksi IN ('Selesai', 'Terkonfirmasi')
+                GROUP BY i.jenis_ikan
+                ORDER BY SUM(dt.jumlah_pembelian) DESC
+                LIMIT 1
+            ";
+
+            var result = cmdScalarByPeriod(query, bulan, tahun);
+            return result == null || result == DBNull.Value ? "Tidak Ada Penjualan" : result.ToString();
+        }
+        public decimal GetTotalItemTerjual(int? bulan, int? tahun)
+        {
+            string query = $@"
+        SELECT COALESCE(SUM(dt.jumlah_pembelian), 0)
+        FROM detail_transaksi dt
+        JOIN transaksi t ON t.id_transaksi = dt.id_transaksi
+        {{filter}}
+        AND t.status_transaksi IN ('Selesai', 'Terkonfirmasi')
+    ";
+            return Convert.ToDecimal(cmdScalarByPeriod(query, bulan, tahun));
         }
     }
 }

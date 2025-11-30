@@ -44,5 +44,35 @@ namespace KoiSmart.Views.Components
                 PbGambar.BackColor = Color.LightGray;
             }
         }
+        public void SetDataRiwayat(TransaksiItem item)
+        {
+
+            LblNama.Text = item.NamaIkan;
+            LblDetail.Text = $"{item.Gender}, {item.Grade}, {item.Panjang} cm";
+
+            LblHargaSatuan.Text = "Rp " + item.HargaSatuan.ToString("N0");
+
+            LblQty.Text = item.Qty.ToString();
+            LblSubtotal.Text = "Rp " + item.Subtotal.ToString("N0");
+            if (item.Gambar != null && item.Gambar.Length > 0)
+            {
+                try
+                {
+                    using (var ms = new MemoryStream(item.Gambar))
+                    {
+                        PbGambar.Image = Image.FromStream(ms);
+                        PbGambar.SizeMode = PictureBoxSizeMode.Zoom;
+                    }
+                }
+                catch
+                {
+                    PbGambar.BackColor = Color.Gray;
+                }
+            }
+            else
+            {
+                PbGambar.BackColor = Color.LightGray;
+            }
+        }
     } 
 }

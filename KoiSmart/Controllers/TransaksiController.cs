@@ -1,25 +1,228 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Diagnostics;
-using KoiSmart.Database;
+﻿using KoiSmart.Database;
 using KoiSmart.Models;
 using KoiSmart.Helpers;
 using Npgsql;
 using NpgsqlTypes;
-using System.Windows.Forms; 
 using System.Data;
+using System.Diagnostics;
 
 namespace KoiSmart.Controllers
 {
-    public class TransaksiController
+    public interface IDbController<T> where T : Models.RiwayatTransaksi
     {
-        private DbContext _dbContext;
-        private const int DefaultCommandTimeoutSeconds = 60; 
+        T GetById(int id);
+    }
+    public class TransaksiController : IDbController<RiwayatTransaksi>
+    {
+        private readonly DbContext _dbContext;
+        private const int DefaultCommandTimeoutSeconds = 60;
+        private static readonly List<string> StatusFinal = new List<string> { "Dibatalkan", "Ditolak", "Selesai" };
 
         public TransaksiController()
         {
             _dbContext = new DbContext();
+        }
+        public RiwayatTransaksi GetById(int id)
+        {
+            return GetDetailTransaksi(id);
+        }
+
+        public RiwayatTransaksi GetDetailTransaksi(int idTransaksi)
+        {
+            RiwayatTransaksi trx = null;
+
+            using (var conn = new NpgsqlConnection(_dbContext.connStr))
+            {
+                try
+                {
+                    conn.Open();
+                    string query = $@"
+                SELECT t.id_transaksi, t.tanggal_transaksi, t.status_transaksi, t.total_harga, t.bukti_pembayaran, t.id_akun,
+                         a.username,
+                         d.id_ikan, d.jumlah_pembelian, i.jenis_ikan, i.harga, i.gambar_ikan, d.subtotal,
+                         i.panjang, i.gender, i.grade
+                FROM transaksi t
+                JOIN detail_transaksi d ON t.id_transaksi = d.id_transaksi
+                JOIN ikan i ON d.id_ikan = i.id_ikan
+                JOIN akun a ON t.id_akun = a.id_akun 
+                WHERE t.id_transaksi = @idTrx
+                -- ORDER BY d.id_detail_transaksi ASC";
+
+                    using (var cmd = new NpgsqlCommand(query, conn))
+                    {
+                        cmd.CommandTimeout = DefaultCommandTimeoutSeconds;
+                        cmd.Parameters.AddWithValue("@idTrx", idTransaksi);
+
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                if (trx == null)
+                                {
+                                    trx = new RiwayatTransaksi
+                                    {
+                                        IdTransaksi = idTransaksi,
+                                        IdAkun = Convert.ToInt32(reader["id_akun"]),
+                                        Username = reader["username"].ToString(),
+                                        Tanggal = reader.IsDBNull(reader.GetOrdinal("tanggal_transaksi")) ? DateTime.MinValue : reader.GetDateTime(reader.GetOrdinal("tanggal_transaksi")),
+                                        Status = reader["status_transaksi"].ToString(),
+                                        TotalBelanja = reader.IsDBNull(reader.GetOrdinal("total_harga")) ? 0m : Convert.ToDecimal(reader["total_harga"]),
+                                        BuktiPembayaran = reader["bukti_pembayaran"] == DBNull.Value ? null : (byte[])reader["bukti_pembayaran"],
+                                        Items = new List<TransaksiItem>()
+                                    };
+                                }
+                                trx.Items.Add(new TransaksiItem
+                                {
+                                    IdIkan = Convert.ToInt32(reader["id_ikan"]),
+                                    NamaIkan = reader["jenis_ikan"].ToString(),
+                                    Qty = Convert.ToInt32(reader["jumlah_pembelian"]),
+                                    HargaSatuan = Convert.ToDecimal(reader["harga"]),
+                                    Subtotal = Convert.ToDecimal(reader["subtotal"]),
+                                    Gambar = reader["gambar_ikan"] == DBNull.Value ? null : (byte[])reader["gambar_ikan"],
+                                    Panjang = Convert.ToInt32(reader["panjang"]),
+                                    Gender = reader["gender"].ToString(),
+                                    Grade = reader["grade"].ToString()
+                                });
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Gagal memuat detail transaksi: " + ex.Message, "Database Error");
+                }
+            }
+            return trx;
+        }
+
+        public List<RiwayatTransaksi> GetTransaksiAktif(int idUser)
+        {
+            string statusExclusionClause = $" AND t.status_transaksi NOT IN ('{string.Join("','", StatusFinal)}')";
+            return GetFilteredTransactions(idUser, statusExclusionClause, true); 
+        }
+        public List<RiwayatTransaksi> GetRiwayatHistoris(int idUser)
+        {
+            string statusInclusionClause = $" AND t.status_transaksi IN ('{string.Join("','", StatusFinal)}')";
+            return GetFilteredTransactions(idUser, statusInclusionClause, true); 
+        }
+        public List<RiwayatTransaksi> GetAllRiwayat(List<string> statusList = null)
+        {
+            string statusFilterClause = string.Empty;
+            if (statusList != null && statusList.Count > 0)
+            {
+                string statusParamsSql = string.Join(",", statusList.Select((s, i) => $"@status_transaksi{i}"));
+                statusFilterClause = $" AND t.status_transaksi IN ({statusParamsSql})";
+            }
+            return GetFilteredTransactions(0, statusFilterClause, false, statusList);
+        }
+        private List<RiwayatTransaksi> GetFilteredTransactions(int idUser, string filterClause, bool isUserSpecific, List<string> statusList = null)
+        {
+            var listTrx = new List<RiwayatTransaksi>();
+
+            using (var conn = new NpgsqlConnection(_dbContext.connStr))
+            {
+                try
+                {
+                    conn.Open();
+                    string joinAccount = !isUserSpecific ? "JOIN akun a ON t.id_akun = a.id_akun" : "";
+                    string userWhereClause = isUserSpecific ? "t.id_akun = @uid" : "1=1";
+
+                    string query = $@"
+                        SELECT t.id_transaksi, t.tanggal_transaksi, t.status_transaksi, t.total_harga, t.bukti_pembayaran, t.id_akun,
+                                {(isUserSpecific ? "'' AS username," : "a.username,")}
+                                d.id_ikan, d.jumlah_pembelian, i.jenis_ikan, i.harga, i.gambar_ikan, d.subtotal,
+                                i.panjang, i.gender, i.grade
+                        FROM transaksi t
+                        JOIN detail_transaksi d ON t.id_transaksi = d.id_transaksi
+                        JOIN ikan i ON d.id_ikan = i.id_ikan
+                        {joinAccount}
+                        WHERE {userWhereClause}
+                        {filterClause} 
+                        ORDER BY t.tanggal_transaksi DESC";
+
+                    using (var cmd = new NpgsqlCommand(query, conn))
+                    {
+                        cmd.CommandTimeout = DefaultCommandTimeoutSeconds;
+                        if (isUserSpecific)
+                        {
+                            cmd.Parameters.AddWithValue("@uid", idUser);
+                        }
+
+                        if (statusList != null && statusList.Count > 0)
+                        {
+                            for (int i = 0; i < statusList.Count; i++)
+                            {
+                                cmd.Parameters.AddWithValue($"@status_transaksi{i}", statusList[i]);
+                            }
+                        }
+
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                int idTrx = Convert.ToInt32(reader["id_transaksi"]);
+                                var trx = listTrx.FirstOrDefault(x => x.IdTransaksi == idTrx);
+
+                                if (trx == null)
+                                {
+                                    trx = new RiwayatTransaksi
+                                    {
+                                        IdTransaksi = idTrx,
+                                        IdAkun = Convert.ToInt32(reader["id_akun"]),
+                                        Username = isUserSpecific ? "Pengguna" : reader["username"].ToString(),
+                                        Tanggal = reader.GetDateTime(reader.GetOrdinal("tanggal_transaksi")),
+                                        Status = reader["status_transaksi"].ToString(),
+                                        TotalBelanja = Convert.ToDecimal(reader["total_harga"]),
+                                        BuktiPembayaran = reader["bukti_pembayaran"] == DBNull.Value ? null : (byte[])reader["bukti_pembayaran"],
+                                        Items = new List<TransaksiItem>()
+                                    };
+                                    listTrx.Add(trx);
+                                }
+                                trx.Items.Add(new TransaksiItem
+                                {
+                                    IdIkan = Convert.ToInt32(reader["id_ikan"]),
+                                    NamaIkan = reader["jenis_ikan"].ToString(),
+                                    Qty = Convert.ToInt32(reader["jumlah_pembelian"]),
+                                    HargaSatuan = Convert.ToDecimal(reader["harga"]),
+                                    Subtotal = Convert.ToDecimal(reader["subtotal"]),
+                                    Gambar = reader["gambar_ikan"] == DBNull.Value ? null : (byte[])reader["gambar_ikan"],
+                                    Panjang = Convert.ToInt32(reader["panjang"]),
+                                    Gender = reader["gender"].ToString(),
+                                    Grade = reader["grade"].ToString()
+                                });
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Gagal memuat list transaksi: " + ex.Message, "Database Error");
+                }
+            }
+            return listTrx;
+        }
+        public bool UpdateStatusTransaksi(int idTransaksi, string newStatus)
+        {
+            using (var conn = new NpgsqlConnection(_dbContext.connStr))
+            {
+                try
+                {
+                    conn.Open();
+                    string query = "UPDATE transaksi SET status_transaksi = @status WHERE id_transaksi = @idTrans";
+                    using (var cmd = new NpgsqlCommand(query, conn))
+                    {
+                        cmd.CommandTimeout = DefaultCommandTimeoutSeconds;
+                        cmd.Parameters.AddWithValue("@status", newStatus);
+                        cmd.Parameters.AddWithValue("@idTrans", idTransaksi);
+                        return cmd.ExecuteNonQuery() > 0;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Gagal update status transaksi: " + ex.Message, "Database Error");
+                    return false;
+                }
+            }
         }
 
         public bool BuatPesanan(int idAkun, byte[] buktiPembayaran, IReadOnlyList<CartItem> items)
@@ -104,185 +307,6 @@ namespace KoiSmart.Controllers
                     }
                 }
             }
-        }
-
-        public List<RiwayatTransaksi> GetRiwayat(int idUser)
-        {
-            return GetRiwayat(idUser, null);
-        }
-
-        public List<RiwayatTransaksi> GetRiwayat(int idUser, List<string> statusList)
-        {
-            var listRiwayat = new List<RiwayatTransaksi>();
-            string statusParamsSql = string.Empty;
-            string statusFilterClause = string.Empty;
-
-            if (statusList != null && statusList.Count > 0)
-            {
-                statusParamsSql = string.Join(",", statusList.Select((s, i) => $"@status_transaksi{i}"));
-                statusFilterClause = $" AND t.status_transaksi IN ({statusParamsSql})";
-            }
-
-            using (var conn = new NpgsqlConnection(_dbContext.connStr))
-            {
-                try
-                {
-                    conn.Open();
-
-                    string query = $@"
-                        SELECT t.id_transaksi, t.tanggal_transaksi, t.status_transaksi, t.total_harga, t.bukti_pembayaran,
-                               d.id_ikan, d.jumlah_pembelian, i.jenis_ikan, i.harga, i.gambar_ikan, d.subtotal,
-                               i.panjang, i.gender, i.grade
-                        FROM transaksi t
-                        JOIN detail_transaksi d ON t.id_transaksi = d.id_transaksi
-                        JOIN ikan i ON d.id_ikan = i.id_ikan
-                        WHERE t.id_akun = @uid
-                        {statusFilterClause}
-                        ORDER BY t.tanggal_transaksi DESC";
-
-                    using (var cmd = new NpgsqlCommand(query, conn))
-                    {
-                        cmd.CommandTimeout = DefaultCommandTimeoutSeconds;
-                        cmd.Parameters.AddWithValue("@uid", idUser);
-
-                        if (!string.IsNullOrEmpty(statusParamsSql))
-                        {
-                            for (int i = 0; i < statusList.Count; i++)
-                            {
-                                cmd.Parameters.AddWithValue($"@status_transaksi{i}", statusList[i]);
-                            }
-                        }
-
-                        using (var reader = cmd.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                int idTrx = Convert.ToInt32(reader["id_transaksi"]);
-
-                                var trx = listRiwayat.FirstOrDefault(x => x.IdTransaksi == idTrx);
-
-                                if (trx == null)
-                                {
-                                    trx = new RiwayatTransaksi
-                                    {
-                                        IdTransaksi = idTrx,
-                                        Tanggal = reader.IsDBNull(reader.GetOrdinal("tanggal_transaksi")) ? DateTime.MinValue : reader.GetDateTime(reader.GetOrdinal("tanggal_transaksi")),
-                                        Status = reader["status_transaksi"].ToString(),
-                                        TotalBelanja = reader.IsDBNull(reader.GetOrdinal("total_harga")) ? 0m : Convert.ToDecimal(reader["total_harga"]),
-                                        BuktiPembayaran = reader["bukti_pembayaran"] == DBNull.Value ? null : (byte[])reader["bukti_pembayaran"],
-                                        Items = new List<RiwayatItem>()
-                                    };
-                                    listRiwayat.Add(trx);
-                                }
-
-                                trx.Items.Add(new RiwayatItem
-                                {
-                                    IdIkan = reader.IsDBNull(reader.GetOrdinal("id_ikan")) ? 0 : Convert.ToInt32(reader["id_ikan"]),
-                                    NamaIkan = reader["jenis_ikan"].ToString(),
-                                    Qty = reader.IsDBNull(reader.GetOrdinal("jumlah_pembelian")) ? 0 : Convert.ToInt32(reader["jumlah_pembelian"]),
-                                    HargaSatuan = reader.IsDBNull(reader.GetOrdinal("harga")) ? 0m : Convert.ToDecimal(reader["harga"]),
-                                    Gambar = reader["gambar_ikan"] == DBNull.Value ? null : (byte[])reader["gambar_ikan"],
-                                    Panjang = reader.IsDBNull(reader.GetOrdinal("panjang")) ? 0 : Convert.ToInt32(reader["panjang"]),
-                                    Gender = reader["gender"] == DBNull.Value ? string.Empty : reader["gender"].ToString(),
-                                    Grade = reader["grade"] == DBNull.Value ? string.Empty : reader["grade"].ToString()
-                                });
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Gagal memuat riwayat: " + ex.Message, "DEBUG DATABASE FAILURE");
-                }
-            }
-            return listRiwayat;
-        }
-
-        public List<RiwayatTransaksi> GetAllRiwayat(List<string> statusList = null)
-        {
-            var listRiwayat = new List<RiwayatTransaksi>();
-            string statusParamsSql = string.Empty;
-            string statusFilterClause = string.Empty;
-
-            if (statusList != null && statusList.Count > 0)
-            {
-                statusParamsSql = string.Join(",", statusList.Select((s, i) => $"@status_transaksi{i}"));
-                statusFilterClause = $" AND t.status_transaksi IN ({statusParamsSql})";
-            }
-
-            using (var conn = new NpgsqlConnection(_dbContext.connStr))
-            {
-                try
-                {
-                    conn.Open();
-
-                    string query = $@"
-                        SELECT t.id_transaksi, t.tanggal_transaksi, t.status_transaksi, t.total_harga, t.bukti_pembayaran,
-                               d.id_ikan, d.jumlah_pembelian, i.jenis_ikan, i.harga, i.gambar_ikan, d.subtotal,
-                               i.panjang, i.gender, i.grade
-                        FROM transaksi t
-                        JOIN detail_transaksi d ON t.id_transaksi = d.id_transaksi
-                        JOIN ikan i ON d.id_ikan = i.id_ikan
-                        WHERE 1=1
-                        {statusFilterClause}
-                        ORDER BY t.tanggal_transaksi DESC";
-
-                    using (var cmd = new NpgsqlCommand(query, conn))
-                    {
-                        cmd.CommandTimeout = DefaultCommandTimeoutSeconds;
-
-                        if (!string.IsNullOrEmpty(statusParamsSql))
-                        {
-                            for (int i = 0; i < statusList.Count; i++)
-                            {
-                                cmd.Parameters.AddWithValue($"@status_transaksi{i}", statusList[i]);
-                            }
-                        }
-
-                        using (var reader = cmd.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                int idTrx = Convert.ToInt32(reader["id_transaksi"]);
-
-                                var trx = listRiwayat.FirstOrDefault(x => x.IdTransaksi == idTrx);
-
-                                if (trx == null)
-                                {
-                                    trx = new RiwayatTransaksi
-                                    {
-                                        IdTransaksi = idTrx,
-                                        Tanggal = reader.IsDBNull(reader.GetOrdinal("tanggal_transaksi")) ? DateTime.MinValue : reader.GetDateTime(reader.GetOrdinal("tanggal_transaksi")),
-                                        Status = reader["status_transaksi"].ToString(),
-                                        TotalBelanja = reader.IsDBNull(reader.GetOrdinal("total_harga")) ? 0m : Convert.ToDecimal(reader["total_harga"]),
-                                        BuktiPembayaran = reader["bukti_pembayaran"] == DBNull.Value ? null : (byte[])reader["bukti_pembayaran"],
-                                        Items = new List<RiwayatItem>()
-                                    };
-                                    listRiwayat.Add(trx);
-                                }
-
-                                trx.Items.Add(new RiwayatItem
-                                {
-                                    IdIkan = reader.IsDBNull(reader.GetOrdinal("id_ikan")) ? 0 : Convert.ToInt32(reader["id_ikan"]),
-                                    NamaIkan = reader["jenis_ikan"].ToString(),
-                                    Qty = reader.IsDBNull(reader.GetOrdinal("jumlah_pembelian")) ? 0 : Convert.ToInt32(reader["jumlah_pembelian"]),
-                                    HargaSatuan = reader.IsDBNull(reader.GetOrdinal("harga")) ? 0m : Convert.ToDecimal(reader["harga"]),
-                                    Gambar = reader["gambar_ikan"] == DBNull.Value ? null : (byte[])reader["gambar_ikan"],
-                                    Panjang = reader.IsDBNull(reader.GetOrdinal("panjang")) ? 0 : Convert.ToInt32(reader["panjang"]),
-                                    Gender = reader["gender"] == DBNull.Value ? string.Empty : reader["gender"].ToString(),
-                                    Grade = reader["grade"] == DBNull.Value ? string.Empty : reader["grade"].ToString()
-                                });
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Gagal memuat riwayat transaksi (admin): " + ex.Message, "DEBUG DATABASE FAILURE");
-                }
-            }
-
-            return listRiwayat;
         }
     }
 }

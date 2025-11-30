@@ -33,7 +33,7 @@ namespace KoiSmart.Views
         {
             if (AppSession.IsAuthenticated && AppSession.CurrentUser != null)
             {
-                LblUsername.Text = "Halo, " + AppSession.CurrentUser.Username;
+                LblUsername.Text = AppSession.CurrentUser.NamaDepan + " " + AppSession.CurrentUser.NamaBelakang;
             }
 
             LoadKatalogProduk();
@@ -203,12 +203,17 @@ namespace KoiSmart.Views
 
         private void BttnTransaksiPembelian_Click(object sender, EventArgs e)
         {
-            V_HalTransaksi formTransaksi = new V_HalTransaksi();
+            V_HalTransaksiCust formTransaksi = new V_HalTransaksiCust();
             formTransaksi.Show();
 
             this.Close();
         }
-        private void BttnRiwayatTransaksi_Click(object sender, EventArgs e) { }
+        private void BttnRiwayatTransaksi_Click(object sender, EventArgs e) 
+        {
+            V_RiwayatTransaksiCust riwayatForm = new V_RiwayatTransaksiCust();
+            riwayatForm.Show();
+            this.Close();
+        }
         private void BttnReview_Click(object sender, EventArgs e) { }
     }
 }

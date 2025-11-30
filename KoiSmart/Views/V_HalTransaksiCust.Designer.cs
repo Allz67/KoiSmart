@@ -1,6 +1,6 @@
 ﻿namespace KoiSmart.Views
 {
-    partial class V_HalTransaksi
+    partial class V_HalTransaksiCust
     {
         /// <summary>
         /// Required designer variable.

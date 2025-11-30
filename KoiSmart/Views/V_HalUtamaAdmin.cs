@@ -29,6 +29,11 @@ namespace KoiSmart.Views
                 return;
             }
 
+            if (AppSession.IsAuthenticated && AppSession.CurrentUser != null)
+            {
+                LblUsername.Text = AppSession.CurrentUser.NamaDepan + " " + AppSession.CurrentUser.NamaBelakang;
+            }
+
             this.Text = $"Dashboard Admin - {AppSession.CurrentUser.NamaDepan} {AppSession.CurrentUser.NamaBelakang}";
 
             LoadDataIkan();
@@ -47,23 +52,6 @@ namespace KoiSmart.Views
                 FlpHalUtama.Controls.Add(kartu);
             }
         }
-
-        private void BtnLogout_Click(object sender, EventArgs e)
-        {
-            DialogResult result = MessageBox.Show("Yakin ingin logout?", "Konfirmasi Logout",
-                MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-            if (result == DialogResult.Yes)
-            {
-                _auth.Logout();
-
-                V_Login loginForm = new V_Login();
-                loginForm.Show();
-
-                this.Close();
-            }
-        }
-
         private void BtnTambahIkan_Click(object sender, EventArgs e)
         {
             V_FormDataIkan formDataIkan = new V_FormDataIkan();
@@ -85,15 +73,44 @@ namespace KoiSmart.Views
         }
         private void BtnTransaksiPenjualan_Click(object sender, EventArgs e)
         {
-            V_TransaksiPenjualan frm = new V_TransaksiPenjualan();
+            V_HalTransaksiAdm frm = new V_HalTransaksiAdm();
             frm.StartPosition = FormStartPosition.CenterScreen;
             frm.Show();
+            this.Close();
         }
 
-        private void BtnRiwayatTransaksi_Click(object sender, EventArgs e) { }
+        private void BtnRiwayatTransaksi_Click(object sender, EventArgs e) 
+        {
+            V_RiwayatTransaksiAdm frm = new V_RiwayatTransaksiAdm();
+            frm.StartPosition = FormStartPosition.CenterScreen;
+            frm.Show();
+            this.Close();
+        }
 
-        private void BtnLaporanTransaksi_Click(object sender, EventArgs e) { }
+        private void BtnLaporanTransaksi_Click(object sender, EventArgs e) 
+        {
+            V_LaporanTransaksi frm = new V_LaporanTransaksi();
+            frm.StartPosition = FormStartPosition.CenterScreen;
+            frm.Show();
+            this.Close();
+        }
 
         private void BtnReviewCust_Click(object sender, EventArgs e) { }
+
+        private void BtnLogout_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show("Yakin ingin logout?", "Konfirmasi Logout",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                _auth.Logout();
+
+                V_Login loginForm = new V_Login();
+                loginForm.Show();
+
+                this.Close();
+            }
+        }
     }
 }

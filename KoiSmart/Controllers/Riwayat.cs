@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq; // Wajib untuk logic grouping
+﻿
 using KoiSmart.Database;
-using KoiSmart.Models;
-using KoiSmart.Helpers;
+using KoiSmart.Models; 
 using Npgsql;
-using System.Windows.Forms;
 using System.Diagnostics;
 
 namespace KoiSmart.Controllers
@@ -13,6 +9,7 @@ namespace KoiSmart.Controllers
     public class RiwayatTransaksiController
     {
         private DbContext _dbContext;
+        private const int DefaultCommandTimeoutSeconds = 60;
 
         public RiwayatTransaksiController()
         {
@@ -28,8 +25,9 @@ namespace KoiSmart.Controllers
                 {
                     conn.Open();
                     string query = @"
-                        SELECT t.id_transaksi, t.tanggal_transaksi, t.status, t.total_harga,
-                               d.jumlah_pembelian, i.jenis_ikan, i.harga, i.gambar_ikan, d.subtotal
+                        SELECT t.id_transaksi, t.tanggal_transaksi, t.status, t.total_harga, t.bukti_pembayaran, t.id_akun,
+                               d.jumlah_pembelian, i.jenis_ikan, i.harga, i.gambar_ikan, d.subtotal,
+                               i.panjang, i.gender, i.grade
                         FROM transaksi t
                         JOIN detail_transaksi d ON t.id_transaksi = d.id_transaksi
                         JOIN ikan i ON i.id_ikan = d.id_ikan
@@ -38,6 +36,7 @@ namespace KoiSmart.Controllers
 
                     using (var cmd = new NpgsqlCommand(query, conn))
                     {
+                        cmd.CommandTimeout = DefaultCommandTimeoutSeconds;
                         cmd.Parameters.AddWithValue("@uid", idUser);
 
                         using (var reader = cmd.ExecuteReader())
@@ -52,20 +51,26 @@ namespace KoiSmart.Controllers
                                     trx = new RiwayatTransaksi
                                     {
                                         IdTransaksi = idTrx,
+                                        IdAkun = Convert.ToInt32(reader["id_akun"]),
                                         Tanggal = Convert.ToDateTime(reader["tanggal_transaksi"]),
                                         Status = reader["status"].ToString(),
                                         TotalBelanja = Convert.ToDecimal(reader["total_harga"]),
-                                        Items = new List<RiwayatItem>()
+                                        BuktiPembayaran = reader["bukti_pembayaran"] == DBNull.Value ? null : (byte[])reader["bukti_pembayaran"],
+                                        Items = new List<TransaksiItem>()
                                     };
                                     listRiwayat.Add(trx);
                                 }
 
-                                trx.Items.Add(new RiwayatItem
+                                trx.Items.Add(new TransaksiItem
                                 {
                                     NamaIkan = reader["jenis_ikan"].ToString(),
                                     Qty = Convert.ToInt32(reader["jumlah_pembelian"]),
                                     HargaSatuan = Convert.ToDecimal(reader["harga"]),
-                                    Gambar = reader["gambar_ikan"] == DBNull.Value ? null : (byte[])reader["gambar_ikan"]
+                                    Subtotal = Convert.ToDecimal(reader["subtotal"]),
+                                    Gambar = reader["gambar_ikan"] == DBNull.Value ? null : (byte[])reader["gambar_ikan"],
+                                    Panjang = Convert.ToInt32(reader["panjang"]),
+                                    Gender = reader["gender"].ToString(),
+                                    Grade = reader["grade"].ToString()
                                 });
                             }
                         }
@@ -74,7 +79,7 @@ namespace KoiSmart.Controllers
                 catch (Exception ex)
                 {
                     Debug.WriteLine("GetRiwayat Error: " + ex);
-                    System.Windows.Forms.MessageBox.Show("Gagal memuat riwayat transaksi. Cek koneksi atau nama kolom DB.\nError: " + ex.Message, "Database Error");
+                    MessageBox.Show("Gagal memuat riwayat transaksi. Cek koneksi atau nama kolom DB.\nError: " + ex.Message, "Database Error");
                 }
             }
             return listRiwayat;

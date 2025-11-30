@@ -23,4 +23,10 @@ namespace KoiSmart.Models
         public decimal TotalPengeluaran { get; set; }
         public string IkanTerlaris { get; set; }
     }
+    public class PeriodeLaporanDTO
+    {
+        public int Tahun { get; set; }
+        public int Bulan { get; set; }
+        public string NamaBulan { get; set; } 
+    }
 }

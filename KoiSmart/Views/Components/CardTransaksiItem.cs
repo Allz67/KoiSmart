@@ -2,7 +2,8 @@
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using KoiSmart.Models; 
+using KoiSmart.Models;
+
 namespace KoiSmart.Views.Components
 {
     public partial class CardTransaksiItem : UserControl
@@ -11,15 +12,13 @@ namespace KoiSmart.Views.Components
         {
             InitializeComponent();
         }
-
-        public void SetData(RiwayatItem item)
+        public void SetData(TransaksiItem item)
         {
+
             LblNama.Text = item.NamaIkan;
 
             LblQty.Text = $"x{item.Qty}";
-
             LblHargaSatuan.Text = "Rp " + item.HargaSatuan.ToString("N0");
-
             if (item.Gambar != null && item.Gambar.Length > 0)
             {
                 try

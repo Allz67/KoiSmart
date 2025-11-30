@@ -1,26 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
-using KoiSmart.Controllers;       
-using KoiSmart.Helpers;           
-using KoiSmart.Models;           
-using KoiSmart.Views.Components;  
+﻿using KoiSmart.Controllers;
+using KoiSmart.Helpers;
+using KoiSmart.Models;
+using KoiSmart.Views.Components;
 
 namespace KoiSmart.Views
 {
-    public partial class V_HalTransaksi : Form
+    public partial class V_HalTransaksiCust : Form
     {
         private TransaksiController _controller;
         private AuthController _auth;
 
-        public V_HalTransaksi()
+        public V_HalTransaksiCust()
         {
             InitializeComponent();
             _controller = new TransaksiController();
             _auth = new AuthController();
-            LoadUserInfo(); 
+            LoadUserInfo();
             LoadRiwayatTransaksi();
         }
 
@@ -44,13 +39,12 @@ namespace KoiSmart.Views
             FlpContent.Controls.Clear();
 
             int idUser = AppSession.CurrentUser.IdAkun;
-
-            List<RiwayatTransaksi> listTrx = _controller.GetRiwayat(idUser);
+            List<RiwayatTransaksi> listTrx = _controller.GetTransaksiAktif(idUser);
 
             if (listTrx == null || listTrx.Count == 0)
             {
                 Label lblKosong = new Label();
-                lblKosong.Text = "Anda belum memiliki riwayat transaksi.";
+                lblKosong.Text = "Anda belum memiliki transaksi aktif.";
                 lblKosong.AutoSize = true;
                 lblKosong.Font = new Font("Segoe UI", 12, FontStyle.Italic);
                 lblKosong.Margin = new Padding(20);
@@ -83,11 +77,13 @@ namespace KoiSmart.Views
 
             try
             {
-                var frm = new V_KonfirmasiPembelian(trx)
+                var frm = new V_DetailTransaksiCustomer(trx.IdTransaksi)
                 {
                     StartPosition = FormStartPosition.CenterParent
                 };
+
                 frm.ShowDialog(this);
+                LoadRiwayatTransaksi();
             }
             catch (Exception ex)
             {

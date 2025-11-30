@@ -1,8 +1,7 @@
 ﻿using KoiSmart.Models;
-using KoiSmart.Views.Components; 
+using KoiSmart.Views.Components;
 using System;
 using System.Drawing;
-using System.Reflection.PortableExecutable;
 using System.Windows.Forms;
 
 namespace KoiSmart.Views.Components
@@ -10,13 +9,11 @@ namespace KoiSmart.Views.Components
     public partial class CardTransaksi : UserControl
     {
         public RiwayatTransaksi DataTrx { get; private set; }
-
         public event EventHandler OnViewDetails;
 
         public CardTransaksi()
         {
             InitializeComponent();
-
             WireUpClickEvents();
         }
 
@@ -27,13 +24,12 @@ namespace KoiSmart.Views.Components
 
             string noTransaksi = "TRX-" + trx.IdTransaksi.ToString("D5");
             string tanggal = trx.Tanggal.ToString("dd MMM yyyy, HH:mm");
-            LblTanggal.Text = $"{noTransaksi}   |   {tanggal}";
+            LblTanggal.Text = $"{noTransaksi}   |   {tanggal}";
 
             LblStatus.Text = trx.Status.ToUpper();
             SetStatusColor(trx.Status);
 
             LblTotal.Text = "Rp " + trx.TotalBelanja.ToString("N0");
-
             FlpBarang.Controls.Clear();
 
             foreach (var item in trx.Items)
@@ -43,7 +39,6 @@ namespace KoiSmart.Views.Components
                 cardAnak.Width = this.Width - 25;
 
                 FlpBarang.Controls.Add(cardAnak);
-
                 AttachClickRecursive(cardAnak);
             }
         }
@@ -52,14 +47,11 @@ namespace KoiSmart.Views.Components
         {
             AttachClickRecursive(this);
         }
-
         private void AttachClickRecursive(Control ctrl)
         {
             if (ctrl == null) return;
-
             ctrl.Click -= TriggerDetail;
             ctrl.Click += TriggerDetail;
-
             foreach (Control child in ctrl.Controls)
             {
                 AttachClickRecursive(child);

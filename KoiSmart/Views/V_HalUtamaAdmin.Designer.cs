@@ -37,6 +37,7 @@
             BtnTambahIkan = new Button();
             FlpHalUtama = new FlowLayoutPanel();
             BttnRefresh = new Button();
+            LblUsername = new Label();
             SuspendLayout();
             // 
             // BtnHalUtama
@@ -158,6 +159,18 @@
             BttnRefresh.UseVisualStyleBackColor = false;
             BttnRefresh.Click += BttnRefresh_Click;
             // 
+            // LblUsername
+            // 
+            LblUsername.AutoSize = true;
+            LblUsername.BackColor = Color.White;
+            LblUsername.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            LblUsername.ForeColor = Color.Black;
+            LblUsername.Location = new Point(135, 99);
+            LblUsername.Name = "LblUsername";
+            LblUsername.Size = new Size(104, 28);
+            LblUsername.TabIndex = 12;
+            LblUsername.Text = "Username";
+            // 
             // V_HalUtamaAdmin
             // 
             AutoScaleDimensions = new SizeF(120F, 120F);
@@ -165,6 +178,7 @@
             BackgroundImage = Properties.Resources.HalUtama_Adm1;
             BackgroundImageLayout = ImageLayout.Stretch;
             ClientSize = new Size(1399, 731);
+            Controls.Add(LblUsername);
             Controls.Add(BtnTransaksiPenjualan);
             Controls.Add(FlpHalUtama);
             Controls.Add(BttnRefresh);
@@ -181,6 +195,7 @@
             Text = "HalUtamaAdmin";
             Load += V_HalUtamaAdmin_Load;
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -194,5 +209,6 @@
         private Button BtnTambahIkan;
         private FlowLayoutPanel FlpHalUtama;
         private Button BttnRefresh;
+        private Label LblUsername;
     }
 }
