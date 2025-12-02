@@ -1,4 +1,5 @@
 ﻿using KoiSmart.Controllers;
+using KoiSmart.Helpers;
 using KoiSmart.Models;
 using System;
 using System.Collections.Generic;
@@ -30,6 +31,15 @@ namespace KoiSmart.Views
             if (CmbBulan.SelectedValue != null && CmbTahun.SelectedValue != null)
             {
                 BtnGenerateLaporan_Click(this, EventArgs.Empty);
+            }
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            if (AppSession.IsAuthenticated && AppSession.CurrentUser != null)
+            {
+                LblUsername.Text = AppSession.CurrentUser.NamaDepan + " " + AppSession.CurrentUser.NamaBelakang;
             }
         }
 

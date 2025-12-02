@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(V_RiwayatTransaksiCust));
             BttnRefresh = new Button();
             FlpContent = new FlowLayoutPanel();
             BtnLogout = new Button();
@@ -36,6 +37,8 @@
             LblUsername = new Label();
             BttnTransaksiPembelian = new Button();
             BttnRiwayatTransaksi = new Button();
+            tableLayoutPanel1 = new TableLayoutPanel();
+            tableLayoutPanel1.SuspendLayout();
             SuspendLayout();
             // 
             // BttnRefresh
@@ -76,23 +79,31 @@
             // 
             // BttnHalUtama
             // 
-            BttnHalUtama.BackgroundImage = Properties.Resources.btnhalutamawhite2;
-            BttnHalUtama.Location = new Point(54, 214);
+            BttnHalUtama.BackColor = Color.Transparent;
+            BttnHalUtama.BackgroundImage = (Image)resources.GetObject("BttnHalUtama.BackgroundImage");
+            BttnHalUtama.BackgroundImageLayout = ImageLayout.Center;
+            BttnHalUtama.FlatStyle = FlatStyle.Flat;
+            BttnHalUtama.ForeColor = Color.Transparent;
+            BttnHalUtama.Location = new Point(2, 2);
             BttnHalUtama.Margin = new Padding(2);
             BttnHalUtama.Name = "BttnHalUtama";
-            BttnHalUtama.Size = new Size(228, 59);
+            BttnHalUtama.Size = new Size(188, 50);
             BttnHalUtama.TabIndex = 22;
-            BttnHalUtama.UseVisualStyleBackColor = true;
+            BttnHalUtama.UseVisualStyleBackColor = false;
             BttnHalUtama.Click += BttnHalUtama_Click;
             // 
             // BttnReview
             // 
-            BttnReview.BackgroundImage = Properties.Resources.btn_review;
-            BttnReview.Location = new Point(54, 455);
+            BttnReview.BackColor = Color.Transparent;
+            BttnReview.BackgroundImage = (Image)resources.GetObject("BttnReview.BackgroundImage");
+            BttnReview.BackgroundImageLayout = ImageLayout.Center;
+            BttnReview.FlatStyle = FlatStyle.Flat;
+            BttnReview.ForeColor = Color.Transparent;
+            BttnReview.Location = new Point(3, 165);
             BttnReview.Name = "BttnReview";
-            BttnReview.Size = new Size(228, 55);
+            BttnReview.Size = new Size(90, 49);
             BttnReview.TabIndex = 21;
-            BttnReview.UseVisualStyleBackColor = true;
+            BttnReview.UseVisualStyleBackColor = false;
             BttnReview.Click += BttnReview_Click;
             // 
             // LblUsername
@@ -101,7 +112,7 @@
             LblUsername.BackColor = Color.Transparent;
             LblUsername.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             LblUsername.ForeColor = Color.Black;
-            LblUsername.Location = new Point(127, 92);
+            LblUsername.Location = new Point(136, 98);
             LblUsername.Name = "LblUsername";
             LblUsername.Size = new Size(104, 28);
             LblUsername.TabIndex = 20;
@@ -110,28 +121,50 @@
             // BttnTransaksiPembelian
             // 
             BttnTransaksiPembelian.BackColor = Color.Transparent;
-            BttnTransaksiPembelian.BackgroundImage = Properties.Resources.btn_transaksipembelian2;
-            BttnTransaksiPembelian.BackgroundImageLayout = ImageLayout.Stretch;
+            BttnTransaksiPembelian.BackgroundImage = (Image)resources.GetObject("BttnTransaksiPembelian.BackgroundImage");
+            BttnTransaksiPembelian.BackgroundImageLayout = ImageLayout.Center;
             BttnTransaksiPembelian.FlatStyle = FlatStyle.Flat;
             BttnTransaksiPembelian.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
             BttnTransaksiPembelian.ForeColor = Color.Transparent;
-            BttnTransaksiPembelian.Location = new Point(54, 300);
+            BttnTransaksiPembelian.Location = new Point(3, 57);
             BttnTransaksiPembelian.Name = "BttnTransaksiPembelian";
-            BttnTransaksiPembelian.Size = new Size(250, 55);
+            BttnTransaksiPembelian.Size = new Size(230, 48);
             BttnTransaksiPembelian.TabIndex = 26;
             BttnTransaksiPembelian.UseVisualStyleBackColor = false;
             BttnTransaksiPembelian.Click += BttnTransaksiPembelian_Click;
             // 
             // BttnRiwayatTransaksi
             // 
+            BttnRiwayatTransaksi.BackColor = Color.Transparent;
             BttnRiwayatTransaksi.BackgroundImage = Properties.Resources.Btn_Riwayat_Transaksi_Adm_Hal_Utama_11;
             BttnRiwayatTransaksi.BackgroundImageLayout = ImageLayout.Center;
-            BttnRiwayatTransaksi.Location = new Point(54, 372);
+            BttnRiwayatTransaksi.FlatStyle = FlatStyle.Flat;
+            BttnRiwayatTransaksi.ForeColor = Color.Transparent;
+            BttnRiwayatTransaksi.Location = new Point(3, 111);
             BttnRiwayatTransaksi.Name = "BttnRiwayatTransaksi";
-            BttnRiwayatTransaksi.Size = new Size(228, 59);
+            BttnRiwayatTransaksi.Size = new Size(270, 48);
             BttnRiwayatTransaksi.TabIndex = 27;
-            BttnRiwayatTransaksi.UseVisualStyleBackColor = true;
+            BttnRiwayatTransaksi.UseVisualStyleBackColor = false;
             BttnRiwayatTransaksi.Click += BttnRiwayatTransaksi_Click;
+            // 
+            // tableLayoutPanel1
+            // 
+            tableLayoutPanel1.BackColor = Color.Transparent;
+            tableLayoutPanel1.ColumnCount = 1;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel1.Controls.Add(BttnHalUtama, 0, 0);
+            tableLayoutPanel1.Controls.Add(BttnRiwayatTransaksi, 0, 2);
+            tableLayoutPanel1.Controls.Add(BttnTransaksiPembelian, 0, 1);
+            tableLayoutPanel1.Controls.Add(BttnReview, 0, 3);
+            tableLayoutPanel1.Location = new Point(40, 216);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 4;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
+            tableLayoutPanel1.Size = new Size(286, 217);
+            tableLayoutPanel1.TabIndex = 28;
             // 
             // V_RiwayatTransaksiCust
             // 
@@ -140,17 +173,15 @@
             BackgroundImage = Properties.Resources.HalRiwayatAdm;
             BackgroundImageLayout = ImageLayout.Stretch;
             ClientSize = new Size(1398, 729);
-            Controls.Add(BttnRiwayatTransaksi);
-            Controls.Add(BttnTransaksiPembelian);
+            Controls.Add(tableLayoutPanel1);
             Controls.Add(BttnRefresh);
             Controls.Add(FlpContent);
             Controls.Add(BtnLogout);
-            Controls.Add(BttnHalUtama);
-            Controls.Add(BttnReview);
             Controls.Add(LblUsername);
             DoubleBuffered = true;
             Name = "V_RiwayatTransaksiCust";
             Text = "V_RiwayatTransaksiCust";
+            tableLayoutPanel1.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -165,5 +196,6 @@
         private Label LblUsername;
         private Button BttnTransaksiPembelian;
         private Button BttnRiwayatTransaksi;
+        private TableLayoutPanel tableLayoutPanel1;
     }
 }

@@ -1,6 +1,12 @@
 ﻿using KoiSmart.Controllers;
+using KoiSmart.Helpers;
 using KoiSmart.Models.Review;
 using KoiSmart.Views.Components;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace KoiSmart.Views
 {
@@ -15,6 +21,15 @@ namespace KoiSmart.Views
             _controller = new ReviewController();
             LoadReviews();
             _auth = new AuthController();
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            if (AppSession.IsAuthenticated && AppSession.CurrentUser != null)
+            {
+                LblUsername.Text = AppSession.CurrentUser.NamaDepan + " " + AppSession.CurrentUser.NamaBelakang;
+            }
         }
 
         private void LoadReviews()

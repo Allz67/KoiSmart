@@ -38,6 +38,8 @@
             FlpHalUtama = new FlowLayoutPanel();
             BttnRefresh = new Button();
             LblUsername = new Label();
+            tableLayoutPanel1 = new TableLayoutPanel();
+            tableLayoutPanel1.SuspendLayout();
             SuspendLayout();
             // 
             // BtnHalUtama
@@ -47,10 +49,10 @@
             BtnHalUtama.BackgroundImageLayout = ImageLayout.Center;
             BtnHalUtama.FlatStyle = FlatStyle.Flat;
             BtnHalUtama.ForeColor = Color.Transparent;
-            BtnHalUtama.Location = new Point(44, 237);
+            BtnHalUtama.Location = new Point(2, 2);
             BtnHalUtama.Margin = new Padding(2);
             BtnHalUtama.Name = "BtnHalUtama";
-            BtnHalUtama.Size = new Size(272, 72);
+            BtnHalUtama.Size = new Size(272, 64);
             BtnHalUtama.TabIndex = 0;
             BtnHalUtama.UseVisualStyleBackColor = false;
             BtnHalUtama.Click += BtnHalUtama_Click;
@@ -61,7 +63,7 @@
             BtnTransaksiPenjualan.BackgroundImage = Properties.Resources.Btn_Transaksi_Penjualan_Adm_Hal_Utama_1;
             BtnTransaksiPenjualan.FlatStyle = FlatStyle.Flat;
             BtnTransaksiPenjualan.ForeColor = Color.Transparent;
-            BtnTransaksiPenjualan.Location = new Point(44, 313);
+            BtnTransaksiPenjualan.Location = new Point(2, 71);
             BtnTransaksiPenjualan.Margin = new Padding(2);
             BtnTransaksiPenjualan.Name = "BtnTransaksiPenjualan";
             BtnTransaksiPenjualan.Size = new Size(228, 40);
@@ -75,10 +77,10 @@
             BtnRiwayatTransaksi.BackgroundImage = Properties.Resources.Btn_Riwayat_Transaksi_Adm_Hal_Utama_1;
             BtnRiwayatTransaksi.FlatStyle = FlatStyle.Flat;
             BtnRiwayatTransaksi.ForeColor = Color.Transparent;
-            BtnRiwayatTransaksi.Location = new Point(44, 375);
+            BtnRiwayatTransaksi.Location = new Point(2, 119);
             BtnRiwayatTransaksi.Margin = new Padding(2);
             BtnRiwayatTransaksi.Name = "BtnRiwayatTransaksi";
-            BtnRiwayatTransaksi.Size = new Size(217, 42);
+            BtnRiwayatTransaksi.Size = new Size(217, 38);
             BtnRiwayatTransaksi.TabIndex = 2;
             BtnRiwayatTransaksi.UseVisualStyleBackColor = false;
             BtnRiwayatTransaksi.Click += BtnRiwayatTransaksi_Click;
@@ -89,10 +91,10 @@
             BtnLaporanTransaksi.BackgroundImage = Properties.Resources.Btn_Laporan_Transaksi_Adm_Hal_Utama_1;
             BtnLaporanTransaksi.FlatStyle = FlatStyle.Flat;
             BtnLaporanTransaksi.ForeColor = Color.Transparent;
-            BtnLaporanTransaksi.Location = new Point(44, 440);
+            BtnLaporanTransaksi.Location = new Point(2, 167);
             BtnLaporanTransaksi.Margin = new Padding(2);
             BtnLaporanTransaksi.Name = "BtnLaporanTransaksi";
-            BtnLaporanTransaksi.Size = new Size(219, 42);
+            BtnLaporanTransaksi.Size = new Size(219, 38);
             BtnLaporanTransaksi.TabIndex = 3;
             BtnLaporanTransaksi.UseVisualStyleBackColor = false;
             BtnLaporanTransaksi.Click += BtnLaporanTransaksi_Click;
@@ -103,7 +105,7 @@
             BtnReviewCust.BackgroundImage = Properties.Resources.Btn_Review_Pelanggan_Adm_Hal_Utama_1;
             BtnReviewCust.FlatStyle = FlatStyle.Flat;
             BtnReviewCust.ForeColor = Color.Transparent;
-            BtnReviewCust.Location = new Point(44, 506);
+            BtnReviewCust.Location = new Point(2, 214);
             BtnReviewCust.Margin = new Padding(2);
             BtnReviewCust.Name = "BtnReviewCust";
             BtnReviewCust.Size = new Size(219, 44);
@@ -143,6 +145,7 @@
             FlpHalUtama.BackgroundImageLayout = ImageLayout.Zoom;
             FlpHalUtama.Location = new Point(382, 93);
             FlpHalUtama.Name = "FlpHalUtama";
+            FlpHalUtama.Padding = new Padding(12);
             FlpHalUtama.Size = new Size(978, 613);
             FlpHalUtama.TabIndex = 7;
             // 
@@ -171,6 +174,27 @@
             LblUsername.TabIndex = 12;
             LblUsername.Text = "Username";
             // 
+            // tableLayoutPanel1
+            // 
+            tableLayoutPanel1.BackColor = Color.Transparent;
+            tableLayoutPanel1.ColumnCount = 1;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel1.Controls.Add(BtnReviewCust, 0, 4);
+            tableLayoutPanel1.Controls.Add(BtnTransaksiPenjualan, 0, 1);
+            tableLayoutPanel1.Controls.Add(BtnLaporanTransaksi, 0, 3);
+            tableLayoutPanel1.Controls.Add(BtnRiwayatTransaksi, 0, 2);
+            tableLayoutPanel1.Controls.Add(BtnHalUtama, 0, 0);
+            tableLayoutPanel1.Location = new Point(45, 208);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 5;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 26.3358784F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 18.181818F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 18.181818F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 17.80303F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 19.318182F));
+            tableLayoutPanel1.Size = new Size(286, 264);
+            tableLayoutPanel1.TabIndex = 56;
+            // 
             // V_HalUtamaAdmin
             // 
             AutoScaleDimensions = new SizeF(120F, 120F);
@@ -178,22 +202,19 @@
             BackgroundImage = Properties.Resources.HalUtama_Adm1;
             BackgroundImageLayout = ImageLayout.Stretch;
             ClientSize = new Size(1399, 731);
+            Controls.Add(tableLayoutPanel1);
             Controls.Add(LblUsername);
-            Controls.Add(BtnTransaksiPenjualan);
             Controls.Add(FlpHalUtama);
             Controls.Add(BttnRefresh);
             Controls.Add(BtnTambahIkan);
             Controls.Add(BtnLogout);
-            Controls.Add(BtnReviewCust);
-            Controls.Add(BtnLaporanTransaksi);
-            Controls.Add(BtnRiwayatTransaksi);
-            Controls.Add(BtnHalUtama);
             DoubleBuffered = true;
             Margin = new Padding(2);
             Name = "V_HalUtamaAdmin";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "HalUtamaAdmin";
             Load += V_HalUtamaAdmin_Load;
+            tableLayoutPanel1.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -210,5 +231,6 @@
         private FlowLayoutPanel FlpHalUtama;
         private Button BttnRefresh;
         private Label LblUsername;
+        private TableLayoutPanel tableLayoutPanel1;
     }
 }

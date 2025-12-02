@@ -25,6 +25,20 @@ namespace KoiSmart.Views.Components
             LbCardHargaIkan.Text = "Rp " + ikan.harga.ToString("N0");
             LbStok.Text = "Stok : " + ikan.stok.ToString();
 
+            // Set status label based on stok:
+            // - "Tersedia" when stok > 0
+            // - "Kosong" otherwise (stok == 0 or negative)
+            if (ikan.stok > 0)
+            {
+                LblStatus.Text = "Tersedia";
+                LblStatus.ForeColor = Color.Green;
+            }
+            else
+            {
+                LblStatus.Text = "Kosong";
+                LblStatus.ForeColor = Color.Red;
+            }
+
             if (ikan.gambar_ikan != null && ikan.gambar_ikan.Length > 0)
             {
                 try

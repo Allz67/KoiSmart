@@ -49,6 +49,7 @@ namespace KoiSmart.Views
 
             foreach (var ikan in listIkan)
             {
+                // create customer card
                 CardIkanCust kartu = new CardIkanCust();
                 kartu.SetData(ikan);
 
@@ -57,7 +58,13 @@ namespace KoiSmart.Views
                     BukaDetailProduk(ikan);
                 };
 
-                FlpHalUtama.Controls.Add(kartu);
+                // Only add to flowpanel if produk is considered "Tersedia"
+                // CardIkan uses: stok > 0 => Tersedia; otherwise Kosong
+                if (ikan.stok > 0)
+                {
+                    FlpHalUtama.Controls.Add(kartu);
+                }
+                // else skip adding the card (treat as Kosong)
             }
         }
 

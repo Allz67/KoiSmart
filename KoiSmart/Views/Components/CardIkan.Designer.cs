@@ -29,12 +29,15 @@
         private void InitializeComponent()
         {
             PanelCardIkan = new Panel();
+            tableLayoutPanel1 = new TableLayoutPanel();
+            LblStatus = new Label();
             BttnCardLihat = new Button();
+            PBCardIkan = new PictureBox();
             LbStok = new Label();
             LbCardHargaIkan = new Label();
             LbCardNamaIkan = new Label();
-            PBCardIkan = new PictureBox();
             PanelCardIkan.SuspendLayout();
+            tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)PBCardIkan).BeginInit();
             SuspendLayout();
             // 
@@ -42,6 +45,7 @@
             // 
             PanelCardIkan.BackgroundImage = Properties.Resources.kotak_ikan;
             PanelCardIkan.BackgroundImageLayout = ImageLayout.Zoom;
+            PanelCardIkan.Controls.Add(tableLayoutPanel1);
             PanelCardIkan.Controls.Add(BttnCardLihat);
             PanelCardIkan.Controls.Add(PBCardIkan);
             PanelCardIkan.Controls.Add(LbStok);
@@ -49,8 +53,31 @@
             PanelCardIkan.Controls.Add(LbCardNamaIkan);
             PanelCardIkan.Location = new Point(3, 9);
             PanelCardIkan.Name = "PanelCardIkan";
-            PanelCardIkan.Size = new Size(295, 285);
+            PanelCardIkan.Size = new Size(284, 285);
             PanelCardIkan.TabIndex = 0;
+            // 
+            // tableLayoutPanel1
+            // 
+            tableLayoutPanel1.ColumnCount = 1;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel1.Controls.Add(LblStatus, 0, 0);
+            tableLayoutPanel1.Location = new Point(196, 174);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 1;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel1.Size = new Size(73, 28);
+            tableLayoutPanel1.TabIndex = 7;
+            // 
+            // LblStatus
+            // 
+            LblStatus.AutoSize = true;
+            LblStatus.Location = new Point(3, 0);
+            LblStatus.Name = "LblStatus";
+            LblStatus.Size = new Size(49, 20);
+            LblStatus.TabIndex = 6;
+            LblStatus.Text = "Status";
             // 
             // BttnCardLihat
             // 
@@ -65,6 +92,15 @@
             BttnCardLihat.Text = "Lihat";
             BttnCardLihat.UseVisualStyleBackColor = false;
             BttnCardLihat.Click += BttnCardLihat_Click;
+            // 
+            // PBCardIkan
+            // 
+            PBCardIkan.BackgroundImageLayout = ImageLayout.Zoom;
+            PBCardIkan.Location = new Point(24, 16);
+            PBCardIkan.Name = "PBCardIkan";
+            PBCardIkan.Size = new Size(245, 141);
+            PBCardIkan.TabIndex = 0;
+            PBCardIkan.TabStop = false;
             // 
             // LbStok
             // 
@@ -96,15 +132,6 @@
             LbCardNamaIkan.TabIndex = 1;
             LbCardNamaIkan.Text = "Nama Ikan";
             // 
-            // PBCardIkan
-            // 
-            PBCardIkan.BackgroundImageLayout = ImageLayout.Zoom;
-            PBCardIkan.Location = new Point(24, 16);
-            PBCardIkan.Name = "PBCardIkan";
-            PBCardIkan.Size = new Size(245, 141);
-            PBCardIkan.TabIndex = 0;
-            PBCardIkan.TabStop = false;
-            // 
             // CardIkan
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -112,9 +139,11 @@
             BackColor = Color.White;
             Controls.Add(PanelCardIkan);
             Name = "CardIkan";
-            Size = new Size(311, 305);
+            Size = new Size(295, 299);
             PanelCardIkan.ResumeLayout(false);
             PanelCardIkan.PerformLayout();
+            tableLayoutPanel1.ResumeLayout(false);
+            tableLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)PBCardIkan).EndInit();
             ResumeLayout(false);
         }
@@ -127,5 +156,7 @@
         private Label LbCardHargaIkan;
         private Label LbCardNamaIkan;
         private PictureBox PBCardIkan;
+        private Label LblStatus;
+        private TableLayoutPanel tableLayoutPanel1;
     }
 }

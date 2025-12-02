@@ -2,6 +2,11 @@
 using KoiSmart.Helpers;
 using KoiSmart.Models;
 using KoiSmart.Views.Components;
+using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace KoiSmart.Views
 {
@@ -68,6 +73,40 @@ namespace KoiSmart.Views
             }
         }
 
+        private async void BttnRefresh_Click(object sender, EventArgs e)
+        {
+            // Give immediate visual feedback, disable button and show wait cursor
+            var prevCursor = Cursor;
+            try
+            {
+                BttnRefresh.Enabled = false;
+                Cursor = Cursors.WaitCursor;
+
+                // small delay to allow cursor update before the work starts (helps UX)
+                await Task.Delay(150);
+
+                // reload data (synchronous UI update)
+                LoadTransaksiPenjualan();
+
+                // optional small pause so user notices the refresh completed
+                await Task.Delay(100);
+
+                // Inform user refresh finished
+                // Use a non-blocking notification: brief toast would be better, but MessageBox is clear.
+                MessageBox.Show("Daftar transaksi berhasil diperbarui.", "Refresh", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("BttnRefresh_Click error: " + ex);
+                MessageBox.Show("Gagal melakukan refresh: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                Cursor = prevCursor;
+                BttnRefresh.Enabled = true;
+            }
+        }
+
         private void BtnTransaksiPenjualan_Click(object sender, EventArgs e)
         {
 
@@ -78,11 +117,6 @@ namespace KoiSmart.Views
             V_HalUtamaAdmin home = new V_HalUtamaAdmin();
             home.Show();
             this.Close();
-        }
-
-        private void BttnRefresh_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void BtnLogout_Click(object sender, EventArgs e)
@@ -109,18 +143,21 @@ namespace KoiSmart.Views
             this.Close();
         }
 
-        private void BtnLaporanTransaksi_Click(object sender, EventArgs e)
+        private void BtnReviewCust_Click(object sender, EventArgs e)
         {
-            V_LaporanTransaksi frm = new V_LaporanTransaksi();
+            V_ReviewAdm frm = new V_ReviewAdm();
             frm.StartPosition = FormStartPosition.CenterScreen;
             frm.Show();
             this.Close();
         }
 
-        private void BtnReviewCust_Click(object sender, EventArgs e)
+        private void BtnLaporanTransaksi_Click(object sender, EventArgs e)
         {
-            V_ReviewAdm frm = new V_ReviewAdm();
-            frm.StartPosition = FormStartPosition.CenterScreen;
+            // Navigate to laporan page (matches Designer event wiring)
+            var frm = new V_LaporanTransaksi
+            {
+                StartPosition = FormStartPosition.CenterScreen
+            };
             frm.Show();
             this.Close();
         }

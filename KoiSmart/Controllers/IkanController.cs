@@ -119,24 +119,57 @@ namespace KoiSmart.Controllers
                 using (var conn = new NpgsqlConnection(_dbContext.connStr))
                 {
                     conn.Open();
-                    string query = "SELECT * FROM ikan ORDER BY id_ikan DESC"; 
 
-                    using (var cmd = new NpgsqlCommand(query, conn))
-                    using (var reader = cmd.ExecuteReader())
+                    // Prefer to fetch only non-deleted rows if column exists.
+                    // If the database does not have is_delete column, fallback to selecting all rows.
+                    string preferQuery = "SELECT * FROM ikan WHERE is_delete = false ORDER BY id_ikan DESC";
+                    string fallbackQuery = "SELECT * FROM ikan ORDER BY id_ikan DESC";
+
+                    string queryToUse = preferQuery;
+                    try
                     {
-                        while (reader.Read())
+                        using (var cmd = new NpgsqlCommand(queryToUse, conn))
+                        using (var reader = cmd.ExecuteReader())
                         {
-                            list.Add(new Ikan
+                            while (reader.Read())
                             {
-                                IdIkan = Convert.ToInt32(reader["id_ikan"]), 
-                                panjang = Convert.ToInt32(reader["panjang"]),
-                                gambar_ikan = reader["gambar_ikan"] == DBNull.Value ? null : (byte[])reader["gambar_ikan"],
-                                jenis_ikan = reader["jenis_ikan"].ToString(),
-                                harga = Convert.ToDecimal(reader["harga"]),
-                                stok = Convert.ToInt32(reader["stok"]),
-                                gender = Enum.Parse<GenderIkan>(reader["gender"].ToString()),
-                                grade = Enum.Parse<GradeIkan>(reader["grade"].ToString())
-                            });
+                                list.Add(new Ikan
+                                {
+                                    IdIkan = Convert.ToInt32(reader["id_ikan"]), 
+                                    panjang = Convert.ToInt32(reader["panjang"]),
+                                    gambar_ikan = reader["gambar_ikan"] == DBNull.Value ? null : (byte[])reader["gambar_ikan"],
+                                    jenis_ikan = reader["jenis_ikan"].ToString(),
+                                    harga = Convert.ToDecimal(reader["harga"]),
+                                    stok = Convert.ToInt32(reader["stok"]),
+                                    gender = Enum.Parse<GenderIkan>(reader["gender"].ToString()),
+                                    grade = Enum.Parse<GradeIkan>(reader["grade"].ToString())
+                                });
+                            }
+                        }
+                    }
+                    catch (PostgresException pex)
+                    {
+                        // Likely column is_delete doesn't exist — fallback to simple query
+                        Debug.WriteLine("AmbilSemuaIkan: preferQuery failed, falling back. PostgresException: " + pex.Message);
+                        queryToUse = fallbackQuery;
+
+                        using (var cmd = new NpgsqlCommand(queryToUse, conn))
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                list.Add(new Ikan
+                                {
+                                    IdIkan = Convert.ToInt32(reader["id_ikan"]), 
+                                    panjang = Convert.ToInt32(reader["panjang"]),
+                                    gambar_ikan = reader["gambar_ikan"] == DBNull.Value ? null : (byte[])reader["gambar_ikan"],
+                                    jenis_ikan = reader["jenis_ikan"].ToString(),
+                                    harga = Convert.ToDecimal(reader["harga"]),
+                                    stok = Convert.ToInt32(reader["stok"]),
+                                    gender = Enum.Parse<GenderIkan>(reader["gender"].ToString()),
+                                    grade = Enum.Parse<GradeIkan>(reader["grade"].ToString())
+                                });
+                            }
                         }
                     }
                 }

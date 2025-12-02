@@ -38,17 +38,22 @@
             BtnLaporanTransaksi = new Button();
             BtnHalamanUtama = new Button();
             BtnTransaksiPenjualan = new Button();
+            tableLayoutPanel1 = new TableLayoutPanel();
+            tableLayoutPanel1.SuspendLayout();
             SuspendLayout();
             // 
             // BtnRiwayatTransaksi
             // 
+            BtnRiwayatTransaksi.BackColor = Color.Transparent;
             BtnRiwayatTransaksi.BackgroundImage = Properties.Resources.Btn_Riwayat_Transaksi_Adm_Hal_Utama_11;
             BtnRiwayatTransaksi.BackgroundImageLayout = ImageLayout.Center;
-            BtnRiwayatTransaksi.Location = new Point(54, 345);
+            BtnRiwayatTransaksi.FlatStyle = FlatStyle.Flat;
+            BtnRiwayatTransaksi.ForeColor = Color.Transparent;
+            BtnRiwayatTransaksi.Location = new Point(3, 100);
             BtnRiwayatTransaksi.Name = "BtnRiwayatTransaksi";
-            BtnRiwayatTransaksi.Size = new Size(228, 59);
+            BtnRiwayatTransaksi.Size = new Size(272, 51);
             BtnRiwayatTransaksi.TabIndex = 34;
-            BtnRiwayatTransaksi.UseVisualStyleBackColor = true;
+            BtnRiwayatTransaksi.UseVisualStyleBackColor = false;
             BtnRiwayatTransaksi.Click += BttnRiwayatTransaksi_Click;
             // 
             // BttnRefresh
@@ -93,7 +98,7 @@
             LblUsername.BackColor = Color.Transparent;
             LblUsername.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             LblUsername.ForeColor = Color.Black;
-            LblUsername.Location = new Point(127, 92);
+            LblUsername.Location = new Point(136, 97);
             LblUsername.Name = "LblUsername";
             LblUsername.Size = new Size(104, 28);
             LblUsername.TabIndex = 28;
@@ -105,7 +110,7 @@
             BtnReviewCust.BackgroundImage = Properties.Resources.Btn_Review_Pelanggan_Adm_Hal_Utama_1;
             BtnReviewCust.FlatStyle = FlatStyle.Flat;
             BtnReviewCust.ForeColor = Color.Transparent;
-            BtnReviewCust.Location = new Point(54, 483);
+            BtnReviewCust.Location = new Point(2, 208);
             BtnReviewCust.Margin = new Padding(2);
             BtnReviewCust.Name = "BtnReviewCust";
             BtnReviewCust.Size = new Size(219, 44);
@@ -119,7 +124,7 @@
             BtnLaporanTransaksi.BackgroundImage = Properties.Resources.Btn_Laporan_Transaksi_Adm_Hal_Utama_1;
             BtnLaporanTransaksi.FlatStyle = FlatStyle.Flat;
             BtnLaporanTransaksi.ForeColor = Color.Transparent;
-            BtnLaporanTransaksi.Location = new Point(54, 424);
+            BtnLaporanTransaksi.Location = new Point(2, 156);
             BtnLaporanTransaksi.Margin = new Padding(2);
             BtnLaporanTransaksi.Name = "BtnLaporanTransaksi";
             BtnLaporanTransaksi.Size = new Size(219, 42);
@@ -134,10 +139,10 @@
             BtnHalamanUtama.BackgroundImageLayout = ImageLayout.Center;
             BtnHalamanUtama.FlatStyle = FlatStyle.Flat;
             BtnHalamanUtama.ForeColor = Color.Transparent;
-            BtnHalamanUtama.Location = new Point(41, 227);
+            BtnHalamanUtama.Location = new Point(2, 2);
             BtnHalamanUtama.Margin = new Padding(2);
             BtnHalamanUtama.Name = "BtnHalamanUtama";
-            BtnHalamanUtama.Size = new Size(232, 40);
+            BtnHalamanUtama.Size = new Size(194, 40);
             BtnHalamanUtama.TabIndex = 37;
             BtnHalamanUtama.UseVisualStyleBackColor = false;
             BtnHalamanUtama.Click += BtnHalamanUtama_Click;
@@ -148,13 +153,34 @@
             BtnTransaksiPenjualan.BackgroundImage = Properties.Resources.Btn_Transaksi_Penjualan_Adm_Hal_Utama_1;
             BtnTransaksiPenjualan.FlatStyle = FlatStyle.Flat;
             BtnTransaksiPenjualan.ForeColor = Color.Transparent;
-            BtnTransaksiPenjualan.Location = new Point(54, 285);
+            BtnTransaksiPenjualan.Location = new Point(2, 50);
             BtnTransaksiPenjualan.Margin = new Padding(2);
             BtnTransaksiPenjualan.Name = "BtnTransaksiPenjualan";
             BtnTransaksiPenjualan.Size = new Size(228, 40);
             BtnTransaksiPenjualan.TabIndex = 38;
             BtnTransaksiPenjualan.UseVisualStyleBackColor = false;
             BtnTransaksiPenjualan.Click += BtnTransaksiPenjualan_Click;
+            // 
+            // tableLayoutPanel1
+            // 
+            tableLayoutPanel1.BackColor = Color.Transparent;
+            tableLayoutPanel1.ColumnCount = 1;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel1.Controls.Add(BtnTransaksiPenjualan, 0, 1);
+            tableLayoutPanel1.Controls.Add(BtnLaporanTransaksi, 0, 3);
+            tableLayoutPanel1.Controls.Add(BtnHalamanUtama, 0, 0);
+            tableLayoutPanel1.Controls.Add(BtnRiwayatTransaksi, 0, 2);
+            tableLayoutPanel1.Controls.Add(BtnReviewCust, 0, 4);
+            tableLayoutPanel1.Location = new Point(38, 211);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 5;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 18.5714283F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 18.9285717F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 21.8844986F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+            tableLayoutPanel1.Size = new Size(286, 262);
+            tableLayoutPanel1.TabIndex = 39;
             // 
             // V_RiwayatTransaksiAdm
             // 
@@ -163,11 +189,7 @@
             BackgroundImage = Properties.Resources.HalRiwayatAdm;
             BackgroundImageLayout = ImageLayout.Stretch;
             ClientSize = new Size(1398, 729);
-            Controls.Add(BtnTransaksiPenjualan);
-            Controls.Add(BtnHalamanUtama);
-            Controls.Add(BtnReviewCust);
-            Controls.Add(BtnLaporanTransaksi);
-            Controls.Add(BtnRiwayatTransaksi);
+            Controls.Add(tableLayoutPanel1);
             Controls.Add(BttnRefresh);
             Controls.Add(FlpContent);
             Controls.Add(BtnLogout);
@@ -175,6 +197,7 @@
             DoubleBuffered = true;
             Name = "V_RiwayatTransaksiAdm";
             Text = "V_RiwayatTransaksiAdm";
+            tableLayoutPanel1.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -190,5 +213,6 @@
         private Button BtnLaporanTransaksi;
         private Button BtnHalamanUtama;
         private Button BtnTransaksiPenjualan;
+        private TableLayoutPanel tableLayoutPanel1;
     }
 }

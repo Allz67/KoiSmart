@@ -36,6 +36,11 @@ namespace KoiSmart.Views
         {
             if (!AppSession.IsAuthenticated) return;
 
+            // Ensure vertical stacking only (no horizontal flow)
+            FlpContent.FlowDirection = FlowDirection.TopDown;
+            FlpContent.WrapContents = false;
+            FlpContent.AutoScroll = true;
+
             FlpContent.Controls.Clear();
 
             int idUser = AppSession.CurrentUser.IdAkun;
@@ -52,6 +57,10 @@ namespace KoiSmart.Views
                 return;
             }
 
+            // compute available width accounting for vertical scrollbar to avoid wrapping
+            int vsb = SystemInformation.VerticalScrollBarWidth;
+            int availableWidth = Math.Max(0, FlpContent.ClientSize.Width - vsb - 20);
+
             foreach (var trx in listTrx)
             {
                 CardTransaksi card = new CardTransaksi();
@@ -62,7 +71,10 @@ namespace KoiSmart.Views
                     OpenDetailReceipt(card.DataTrx);
                 };
 
-                card.Width = FlpContent.Width - 30;
+                // enforce width so cards stack vertically and never trigger horizontal flow
+                card.Width = availableWidth;
+                card.Margin = new Padding(8);
+
                 FlpContent.Controls.Add(card);
             }
         }
