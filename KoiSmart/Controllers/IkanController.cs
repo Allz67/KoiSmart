@@ -2,16 +2,14 @@
 using KoiSmart.Interfaces;
 using KoiSmart.Models;
 using Npgsql;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Windows.Forms;
 
 namespace KoiSmart.Controllers
 {
     public class IkanController : IIkan
     {
         private DbContext _dbContext;
+        private const int DefaultCommandTimeoutSeconds = 60;
 
         public IkanController()
         {
@@ -94,19 +92,22 @@ namespace KoiSmart.Controllers
                 using (var conn = new NpgsqlConnection(_dbContext.connStr))
                 {
                     conn.Open();
-                    var query = "DELETE FROM ikan WHERE id_ikan=@id";
+                    var query = "UPDATE ikan SET stok = 0 WHERE id_ikan=@id";
+
                     using (var cmd = new NpgsqlCommand(query, conn))
                     {
+                        cmd.CommandTimeout = DefaultCommandTimeoutSeconds;
+
                         cmd.Parameters.AddWithValue("@id", id);
-                        cmd.ExecuteNonQuery();
+                        cmd.ExecuteNonQuery(); 
                     }
                 }
-                return true;
+                return true; 
             }
             catch (Exception ex)
             {
                 Debug.WriteLine("DeleteIkan error: " + ex);
-                MessageBox.Show("Gagal menghapus dari database. Error: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Gagal melakukan Soft Delete. Error: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
         }
@@ -119,9 +120,6 @@ namespace KoiSmart.Controllers
                 using (var conn = new NpgsqlConnection(_dbContext.connStr))
                 {
                     conn.Open();
-
-                    // Prefer to fetch only non-deleted rows if column exists.
-                    // If the database does not have is_delete column, fallback to selecting all rows.
                     string preferQuery = "SELECT * FROM ikan WHERE is_delete = false ORDER BY id_ikan DESC";
                     string fallbackQuery = "SELECT * FROM ikan ORDER BY id_ikan DESC";
 
@@ -149,7 +147,6 @@ namespace KoiSmart.Controllers
                     }
                     catch (PostgresException pex)
                     {
-                        // Likely column is_delete doesn't exist — fallback to simple query
                         Debug.WriteLine("AmbilSemuaIkan: preferQuery failed, falling back. PostgresException: " + pex.Message);
                         queryToUse = fallbackQuery;
 

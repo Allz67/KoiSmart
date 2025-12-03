@@ -24,7 +24,6 @@ namespace KoiSmart.Views
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            // Ensure data loads even if the Designer load handler is not wired
             LoadDataIkan();
         }
 
@@ -43,8 +42,6 @@ namespace KoiSmart.Views
             }
 
             this.Text = $"Dashboard Admin - {AppSession.CurrentUser.NamaDepan} {AppSession.CurrentUser.NamaBelakang}";
-
-            // LoadDataIkan();  <-- now invoked by OnLoad to be more robust
         }
 
         private void LoadDataIkan()
@@ -58,8 +55,6 @@ namespace KoiSmart.Views
                 }
 
                 FlpHalUtama.Controls.Clear();
-
-                // ensure FlowLayoutPanel is configured for horizontal-first wrapping
                 FlpHalUtama.FlowDirection = FlowDirection.LeftToRight;
                 FlpHalUtama.WrapContents = true;
                 FlpHalUtama.AutoScroll = true;
@@ -73,26 +68,15 @@ namespace KoiSmart.Views
                     MessageBox.Show("Tidak ada data ikan yang dimuat. Periksa koneksi DB, query, atau kolom is_delete.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
-
-                // Layout parameters to fit at least 3 cards horizontally
                 int desiredColumns = 3;
-                int minCardWidth = 200; // reduce minimum to allow denser packing
-                int gap = 10; // horizontal gap between cards (small)
-
-                // Use ClientSize.Width, fallback to Width if ClientSize.Width is not set yet
+                int minCardWidth = 200; 
+                int gap = 10;
                 int panelWidth = FlpHalUtama.ClientSize.Width > 0 ? FlpHalUtama.ClientSize.Width : FlpHalUtama.Width;
-                // subtract FlowLayoutPanel paddings
                 int paddingH = FlpHalUtama.Padding.Left + FlpHalUtama.Padding.Right;
-                // subtract scrollbar width to avoid last column wrap
                 int vsb = SystemInformation.VerticalScrollBarWidth;
-                // available width for cards
                 int available = Math.Max(0, panelWidth - paddingH - (gap * (desiredColumns - 1)) - vsb - 8);
-
-                // compute target width and make it slightly smaller to account for internal control padding/margins
                 int cardWidth = available / desiredColumns;
                 cardWidth = Math.Max(minCardWidth, cardWidth - 16);
-
-                // cap card width to avoid overly wide cards on very large panels
                 int maxCardWidth = 340;
                 if (cardWidth > maxCardWidth) cardWidth = maxCardWidth;
 
@@ -100,13 +84,7 @@ namespace KoiSmart.Views
                 {
                     CardIkan kartu = new CardIkan();
                     kartu.SetData(data);
-
-                    // enforce card width so FlowLayoutPanel can place multiple cards side-by-side
                     kartu.Width = cardWidth;
-                    // keep default height or adjust if needed
-                    // kartu.Height = 305;
-
-                    // compact margin so spacing is tighter horizontally
                     kartu.Margin = new Padding(gap / 2, gap, gap / 2, gap);
 
                     FlpHalUtama.Controls.Add(kartu);

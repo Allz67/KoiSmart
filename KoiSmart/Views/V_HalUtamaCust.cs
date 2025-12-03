@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Windows.Forms;
-using KoiSmart.Controllers;      
+﻿using KoiSmart.Controllers;      
 using KoiSmart.Models;            
 using KoiSmart.Helpers;          
 using KoiSmart.Views.Components; 
@@ -49,7 +45,6 @@ namespace KoiSmart.Views
 
             foreach (var ikan in listIkan)
             {
-                // create customer card
                 CardIkanCust kartu = new CardIkanCust();
                 kartu.SetData(ikan);
 
@@ -57,14 +52,10 @@ namespace KoiSmart.Views
                 {
                     BukaDetailProduk(ikan);
                 };
-
-                // Only add to flowpanel if produk is considered "Tersedia"
-                // CardIkan uses: stok > 0 => Tersedia; otherwise Kosong
                 if (ikan.stok > 0)
                 {
                     FlpHalUtama.Controls.Add(kartu);
                 }
-                // else skip adding the card (treat as Kosong)
             }
         }
 
