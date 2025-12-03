@@ -38,7 +38,7 @@ namespace KoiSmart.Views
             FlpContent.Controls.Clear();
 
             int idUser = AppSession.CurrentUser.IdAkun;
-            List<RiwayatTransaksi> listTrx = _controller.GetRiwayatHistoris(idUser);
+            List<Transaksi> listTrx = _controller.GetHistoricalTransactions(idUser);
 
             if (listTrx == null || listTrx.Count == 0)
             {
@@ -66,7 +66,7 @@ namespace KoiSmart.Views
             }
         }
 
-        private void OpenDetailReceipt(RiwayatTransaksi trx)
+        private void OpenDetailReceipt(Transaksi trx)
         {
             if (trx == null)
             {

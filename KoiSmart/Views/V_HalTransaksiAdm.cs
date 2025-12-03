@@ -2,11 +2,7 @@
 using KoiSmart.Helpers;
 using KoiSmart.Models;
 using KoiSmart.Views.Components;
-using System;
-using System.Collections.Generic;
-using System.Windows.Forms;
 using System.Diagnostics;
-using System.Threading.Tasks;
 
 namespace KoiSmart.Views
 {
@@ -28,7 +24,7 @@ namespace KoiSmart.Views
         {
             FlpTransPenjualan.Controls.Clear();
             List<string> statusAktif = new List<string> { "Pending", "Terkonfirmasi", "PengajuanPembatalan" };
-            List<RiwayatTransaksi> list = _transController.GetAllRiwayat(statusAktif);
+            List<Transaksi> list = _transController.GetAllTransactions(statusAktif);
 
             if (list == null || list.Count == 0)
             {
@@ -75,24 +71,15 @@ namespace KoiSmart.Views
 
         private async void BttnRefresh_Click(object sender, EventArgs e)
         {
-            // Give immediate visual feedback, disable button and show wait cursor
             var prevCursor = Cursor;
             try
             {
                 BttnRefresh.Enabled = false;
                 Cursor = Cursors.WaitCursor;
 
-                // small delay to allow cursor update before the work starts (helps UX)
                 await Task.Delay(150);
-
-                // reload data (synchronous UI update)
                 LoadTransaksiPenjualan();
-
-                // optional small pause so user notices the refresh completed
                 await Task.Delay(100);
-
-                // Inform user refresh finished
-                // Use a non-blocking notification: brief toast would be better, but MessageBox is clear.
                 MessageBox.Show("Daftar transaksi berhasil diperbarui.", "Refresh", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
@@ -153,7 +140,6 @@ namespace KoiSmart.Views
 
         private void BtnLaporanTransaksi_Click(object sender, EventArgs e)
         {
-            // Navigate to laporan page (matches Designer event wiring)
             var frm = new V_LaporanTransaksi
             {
                 StartPosition = FormStartPosition.CenterScreen

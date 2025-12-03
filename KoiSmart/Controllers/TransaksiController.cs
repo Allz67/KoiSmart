@@ -1,6 +1,6 @@
 ﻿using KoiSmart.Database;
-using KoiSmart.Models;
 using KoiSmart.Helpers;
+using KoiSmart.Models;
 using Npgsql;
 using NpgsqlTypes;
 using System.Data;
@@ -8,11 +8,12 @@ using System.Diagnostics;
 
 namespace KoiSmart.Controllers
 {
-    public interface IDbController<T> where T : Models.RiwayatTransaksi
+    public interface IDbController<T> where T : Models.Transaksi
     {
         T GetById(int id);
     }
-    public class TransaksiController : IDbController<RiwayatTransaksi>
+
+    public class TransaksiController : IDbController<Transaksi>
     {
         private readonly DbContext _dbContext;
         private const int DefaultCommandTimeoutSeconds = 60;
@@ -22,14 +23,13 @@ namespace KoiSmart.Controllers
         {
             _dbContext = new DbContext();
         }
-        public RiwayatTransaksi GetById(int id)
+        public Transaksi GetById(int id)
         {
             return GetDetailTransaksi(id);
         }
-
-        public RiwayatTransaksi GetDetailTransaksi(int idTransaksi)
+        public Transaksi GetDetailTransaksi(int idTransaksi)
         {
-            RiwayatTransaksi trx = null;
+            Transaksi trx = null;
 
             using (var conn = new NpgsqlConnection(_dbContext.connStr))
             {
@@ -37,16 +37,15 @@ namespace KoiSmart.Controllers
                 {
                     conn.Open();
                     string query = $@"
-                SELECT t.id_transaksi, t.tanggal_transaksi, t.status_transaksi, t.total_harga, t.bukti_pembayaran, t.id_akun,
-                         a.username,
-                         d.id_ikan, d.jumlah_pembelian, i.jenis_ikan, i.harga, i.gambar_ikan, d.subtotal,
-                         i.panjang, i.gender, i.grade
-                FROM transaksi t
-                JOIN detail_transaksi d ON t.id_transaksi = d.id_transaksi
-                JOIN ikan i ON d.id_ikan = i.id_ikan
-                JOIN akun a ON t.id_akun = a.id_akun 
-                WHERE t.id_transaksi = @idTrx
-                -- ORDER BY d.id_detail_transaksi ASC";
+                        SELECT t.id_transaksi, t.tanggal_transaksi, t.status_transaksi, t.total_harga, t.bukti_pembayaran, t.id_akun,
+                               a.username,
+                               d.id_ikan, d.jumlah_pembelian, i.jenis_ikan, i.harga, i.gambar_ikan, d.subtotal,
+                               i.panjang, i.gender, i.grade
+                        FROM transaksi t
+                        JOIN detail_transaksi d ON t.id_transaksi = d.id_transaksi
+                        JOIN ikan i ON d.id_ikan = i.id_ikan
+                        JOIN akun a ON t.id_akun = a.id_akun 
+                        WHERE t.id_transaksi = @idTrx";
 
                     using (var cmd = new NpgsqlCommand(query, conn))
                     {
@@ -59,7 +58,7 @@ namespace KoiSmart.Controllers
                             {
                                 if (trx == null)
                                 {
-                                    trx = new RiwayatTransaksi
+                                    trx = new Transaksi
                                     {
                                         IdTransaksi = idTransaksi,
                                         IdAkun = Convert.ToInt32(reader["id_akun"]),
@@ -89,23 +88,23 @@ namespace KoiSmart.Controllers
                 }
                 catch (Exception ex)
                 {
+                    System.Diagnostics.Debug.WriteLine("Gagal memuat detail transaksi: " + ex.Message);
                     MessageBox.Show("Gagal memuat detail transaksi: " + ex.Message, "Database Error");
                 }
             }
             return trx;
         }
-
-        public List<RiwayatTransaksi> GetTransaksiAktif(int idUser)
+        public List<Transaksi> GetActiveTransactions(int idUser)
         {
             string statusExclusionClause = $" AND t.status_transaksi NOT IN ('{string.Join("','", StatusFinal)}')";
-            return GetFilteredTransactions(idUser, statusExclusionClause, true); 
+            return GetFilteredTransactions(idUser, statusExclusionClause, true);
         }
-        public List<RiwayatTransaksi> GetRiwayatHistoris(int idUser)
+        public List<Transaksi> GetHistoricalTransactions(int idUser)
         {
             string statusInclusionClause = $" AND t.status_transaksi IN ('{string.Join("','", StatusFinal)}')";
-            return GetFilteredTransactions(idUser, statusInclusionClause, true); 
+            return GetFilteredTransactions(idUser, statusInclusionClause, true);
         }
-        public List<RiwayatTransaksi> GetAllRiwayat(List<string> statusList = null)
+        public List<Transaksi> GetAllTransactions(List<string> statusList = null)
         {
             string statusFilterClause = string.Empty;
             if (statusList != null && statusList.Count > 0)
@@ -115,9 +114,9 @@ namespace KoiSmart.Controllers
             }
             return GetFilteredTransactions(0, statusFilterClause, false, statusList);
         }
-        private List<RiwayatTransaksi> GetFilteredTransactions(int idUser, string filterClause, bool isUserSpecific, List<string> statusList = null)
+        private List<Transaksi> GetFilteredTransactions(int idUser, string filterClause, bool isUserSpecific, List<string> statusList = null)
         {
-            var listTrx = new List<RiwayatTransaksi>();
+            var listTrx = new List<Transaksi>();
 
             using (var conn = new NpgsqlConnection(_dbContext.connStr))
             {
@@ -165,7 +164,7 @@ namespace KoiSmart.Controllers
 
                                 if (trx == null)
                                 {
-                                    trx = new RiwayatTransaksi
+                                    trx = new Transaksi
                                     {
                                         IdTransaksi = idTrx,
                                         IdAkun = Convert.ToInt32(reader["id_akun"]),
@@ -196,11 +195,13 @@ namespace KoiSmart.Controllers
                 }
                 catch (Exception ex)
                 {
+                    System.Diagnostics.Debug.WriteLine("Gagal memuat list transaksi: " + ex.Message);
                     MessageBox.Show("Gagal memuat list transaksi: " + ex.Message, "Database Error");
                 }
             }
             return listTrx;
         }
+
         public bool UpdateStatusTransaksi(int idTransaksi, string newStatus)
         {
             using (var conn = new NpgsqlConnection(_dbContext.connStr))

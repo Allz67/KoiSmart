@@ -47,7 +47,7 @@ namespace KoiSmart.Models
 
         public override string ToString() => $"{NamaIkan} x {Qty}";
     }
-    public class RiwayatTransaksi
+    public class Transaksi
     {
         public int IdTransaksi { get; set; }
         public int IdAkun { get; set; }

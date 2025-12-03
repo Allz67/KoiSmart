@@ -16,12 +16,12 @@ namespace KoiSmart.Views
             _controller = new TransaksiController();
             _auth = new AuthController();
             LoadUserInfo();
-            LoadRiwayatTransaksi();
+            LoadTransaksi();
         }
 
         private void V_HalTransaksi_Load(object sender, EventArgs e)
         {
-            LoadRiwayatTransaksi();
+            LoadTransaksi();
         }
 
         private void LoadUserInfo()
@@ -32,11 +32,10 @@ namespace KoiSmart.Views
             }
         }
 
-        private void LoadRiwayatTransaksi()
+        private void LoadTransaksi()
         {
             if (!AppSession.IsAuthenticated) return;
 
-            // Ensure vertical stacking only (no horizontal flow)
             FlpContent.FlowDirection = FlowDirection.TopDown;
             FlpContent.WrapContents = false;
             FlpContent.AutoScroll = true;
@@ -44,7 +43,7 @@ namespace KoiSmart.Views
             FlpContent.Controls.Clear();
 
             int idUser = AppSession.CurrentUser.IdAkun;
-            List<RiwayatTransaksi> listTrx = _controller.GetTransaksiAktif(idUser);
+            List<Transaksi> listTrx = _controller.GetActiveTransactions(idUser);
 
             if (listTrx == null || listTrx.Count == 0)
             {
@@ -56,8 +55,6 @@ namespace KoiSmart.Views
                 FlpContent.Controls.Add(lblKosong);
                 return;
             }
-
-            // compute available width accounting for vertical scrollbar to avoid wrapping
             int vsb = SystemInformation.VerticalScrollBarWidth;
             int availableWidth = Math.Max(0, FlpContent.ClientSize.Width - vsb - 20);
 
@@ -70,8 +67,6 @@ namespace KoiSmart.Views
                 {
                     OpenDetailReceipt(card.DataTrx);
                 };
-
-                // enforce width so cards stack vertically and never trigger horizontal flow
                 card.Width = availableWidth;
                 card.Margin = new Padding(8);
 
@@ -79,7 +74,7 @@ namespace KoiSmart.Views
             }
         }
 
-        private void OpenDetailReceipt(RiwayatTransaksi trx)
+        private void OpenDetailReceipt(Transaksi trx)
         {
             if (trx == null)
             {
@@ -95,7 +90,7 @@ namespace KoiSmart.Views
                 };
 
                 frm.ShowDialog(this);
-                LoadRiwayatTransaksi();
+                LoadTransaksi();
             }
             catch (Exception ex)
             {
@@ -112,7 +107,7 @@ namespace KoiSmart.Views
 
         private void BttnRefresh_Click(object sender, EventArgs e)
         {
-            LoadRiwayatTransaksi();
+            LoadTransaksi();
         }
 
         private void BtnLogout_Click(object sender, EventArgs e)

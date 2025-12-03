@@ -15,9 +15,9 @@ namespace KoiSmart.Controllers
         {
             _dbContext = new DbContext();
         }
-        public List<RiwayatTransaksi> GetRiwayat(int idUser)
+        public List<Transaksi> GetRiwayat(int idUser)
         {
-            var listRiwayat = new List<RiwayatTransaksi>();
+            var listRiwayat = new List<Transaksi>();
 
             using (var conn = new NpgsqlConnection(_dbContext.connStr))
             {
@@ -48,7 +48,7 @@ namespace KoiSmart.Controllers
 
                                 if (trx == null)
                                 {
-                                    trx = new RiwayatTransaksi
+                                    trx = new Transaksi
                                     {
                                         IdTransaksi = idTrx,
                                         IdAkun = Convert.ToInt32(reader["id_akun"]),

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Windows.Forms;
-using KoiSmart.Controllers;
+﻿using KoiSmart.Controllers;
 using KoiSmart.Models;
 using KoiSmart.Views.Components;
-using KoiSmart.Helpers;
-using KoiSmart.Models.Review; 
 
 namespace KoiSmart.Views
 {
@@ -14,7 +8,7 @@ namespace KoiSmart.Views
     {
         private readonly TransaksiController _transaksiController;
         private readonly ReviewController _reviewController; 
-        private RiwayatTransaksi _currentTransaksi;
+        private Transaksi _currentTransaksi;
         private static readonly List<string> StatusFinalArsip = new List<string> { "Selesai", "Dibatalkan", "Ditolak" };
         private int? _existingReviewId;
 
@@ -84,7 +78,7 @@ namespace KoiSmart.Views
             }
         }
 
-        private void SetReviewButtonCustStatus(RiwayatTransaksi trx)
+        private void SetReviewButtonCustStatus(Transaksi trx)
         {
             bool isCompleted = trx.Status == Status.Selesai.ToString();
             int? reviewId = _reviewController.GetReviewId(trx.IdTransaksi);

@@ -8,7 +8,7 @@ namespace KoiSmart.Views.Components
 {
     public partial class CardTransaksi : UserControl
     {
-        public RiwayatTransaksi DataTrx { get; private set; }
+        public Transaksi DataTrx { get; private set; }
         public event EventHandler OnViewDetails;
 
         public CardTransaksi()
@@ -17,7 +17,7 @@ namespace KoiSmart.Views.Components
             WireUpClickEvents();
         }
 
-        public void SetData(RiwayatTransaksi trx)
+        public void SetData(Transaksi trx)
         {
             if (trx == null) return;
             DataTrx = trx;

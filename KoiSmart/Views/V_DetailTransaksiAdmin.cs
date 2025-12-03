@@ -7,7 +7,7 @@ namespace KoiSmart.Views
     public partial class V_DetailTransaksiAdmin : Form
     {
         private readonly TransaksiController _transaksiController;
-        private RiwayatTransaksi _currentTransaksi;
+        private Transaksi _currentTransaksi;
 
         public int TransaksiId { get; private set; }
         private static readonly List<string> StatusFinalArsip = new List<string> { "Selesai", "Dibatalkan", "Ditolak" };

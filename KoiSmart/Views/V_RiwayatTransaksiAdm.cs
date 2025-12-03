@@ -2,11 +2,6 @@
 using KoiSmart.Helpers;
 using KoiSmart.Models;
 using KoiSmart.Views.Components;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Windows.Forms;
 
 namespace KoiSmart.Views
 {
@@ -34,8 +29,8 @@ namespace KoiSmart.Views
         {
             FlpContent.Controls.Clear();
             List<string> statusHistoris = new List<string> { "Selesai", "Dibatalkan", "Ditolak" };
-            List<RiwayatTransaksi> list = _transController.GetAllRiwayat(statusHistoris);
-
+            List<Transaksi> list = _transController.GetAllTransactions(statusHistoris);
+                
             if (list == null || list.Count == 0)
             {
                 Label lblKosong = new Label();
